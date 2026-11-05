@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOURNEY+ | All-in-One Shariah Cross-Border E-Wallet</title>
+    <title>JOURNEY+ | Cross-Border Shariah E-Wallet</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js for Spending Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
@@ -38,6 +40,12 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* Compass Brand Emblem Styling */
+        .compass-logo-ring {
+            background: radial-gradient(circle, #D4A373 0%, #8C533E 100%);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.3), 0 4px 10px rgba(140, 83, 62, 0.3);
+        }
+
         .spinner {
             border: 2px solid #f3f3f3;
             border-top: 2px solid #C68B59;
@@ -52,6 +60,21 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Multi-page Transition */
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -59,10 +82,15 @@
     <!-- Top Navigation -->
     <nav class="bg-white/90 backdrop-blur-md border-b border-stone-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-                <div class="w-10 h-10 rounded-2xl brand-copper-btn flex items-center justify-center shadow-md font-black text-lg tracking-wider">
-                    J+
+            
+            <!-- Brand Logo (Compass Emblem matching provided image) -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showPage('home')">
+                <div class="w-11 h-11 rounded-full compass-logo-ring flex items-center justify-center relative shadow-md">
+                    <!-- Compass Rose Star SVG -->
+                    <svg class="w-7 h-7 text-amber-100 absolute" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
+                    </svg>
+                    <span class="font-black text-xs text-white z-10 tracking-tight">J+</span>
                 </div>
                 <div class="flex items-center font-black text-2xl tracking-tight">
                     <span class="text-[#8CE600]">J</span>
@@ -76,572 +104,682 @@
                 </div>
             </div>
 
-            <!-- Navigation Links -->
-            <div class="hidden md:flex items-center gap-7 font-semibold text-stone-600 text-sm">
-                <a href="#about" class="hover:text-[#8C533E] transition">About JOURNEY+</a>
-                <a href="#ecosystem" class="hover:text-[#8C533E] transition">Features & Shariah</a>
-                <a href="#calculator" class="hover:text-[#8C533E] transition">Live FX Engine</a>
-                <a href="#structure" class="hover:text-[#8C533E] transition">Organization</a>
+            <!-- Page Navigation Links -->
+            <div class="hidden md:flex items-center gap-6 font-semibold text-stone-600 text-sm">
+                <button onclick="showPage('home')" class="hover:text-[#8C533E] transition">Home</button>
+                <button onclick="showPage('about')" class="hover:text-[#8C533E] transition">About Us</button>
+                <button onclick="showPage('itinerary')" class="hover:text-[#8C533E] transition">Hatyai Itinerary</button>
+                <button onclick="showPage('splitbill')" class="hover:text-[#8C533E] transition">Split Bill</button>
+                <button onclick="showPage('tracker')" class="hover:text-[#8C533E] transition">Spending Tracker</button>
             </div>
 
-            <!-- Action Buttons -->
+            <!-- Header Quick Action -->
             <div class="flex items-center gap-3">
-                <button onclick="openModal('zakatModal')" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition">
-                    <i data-lucide="heart" class="w-3.5 h-3.5 text-emerald-600"></i> Zakat & Charity
-                </button>
-                <button onclick="openModal('solatModal')" class="brand-copper-btn px-4 py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center gap-1.5">
-                    <i data-lucide="compass" class="w-3.5 h-3.5"></i> JourneySolat
+                <button onclick="showPage('solat')" class="brand-copper-btn px-4 py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center gap-1.5">
+                    <i data-lucide="compass" class="w-4 h-4"></i> JourneySolat
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 text-[#8C533E] text-xs font-extrabold border border-amber-200">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> 100% Shariah-Compliant Cross-Border E-Wallet
-            </div>
+    <!-- MAIN DYNAMIC PAGE CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 flex-grow w-full">
+
+        <!-- PAGE 1: HOME LANDING & DASHBOARD VIEW -->
+        <div id="page-home" class="page-view active space-y-16">
             
-            <h1 class="text-4xl sm:text-5xl font-extrabold text-[#4A3B32] leading-tight">
-                Your All-in-One Financial, Travel & <span class="text-copper-gradient">Faith Companion</span>
-            </h1>
-            
-            <p class="text-stone-600 text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Designed by JOURNEY+ Sdn. Bhd. for global travelers and digital nomads. Seamlessly manage Wadiah savings, Bay' al-Sarf FX conversions, Qard al-Hassan split bills, Musyarakah investments, and location-accurate JourneySolat tools.
-            </p>
-
-            <!-- Key Trust Indicators -->
-            <div class="grid grid-cols-3 gap-3 pt-2 max-w-lg mx-auto lg:mx-0">
-                <div class="bg-white p-3 rounded-2xl border border-stone-200 text-center">
-                    <p class="text-xs font-bold text-stone-400">Savings</p>
-                    <p class="text-xs font-black text-[#8C533E]">Wadiah Yad Amanah</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-stone-200 text-center">
-                    <p class="text-xs font-bold text-stone-400">Currency FX</p>
-                    <p class="text-xs font-black text-[#8C533E]">Bay' al-Sarf</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-stone-200 text-center">
-                    <p class="text-xs font-bold text-stone-400">Group Split</p>
-                    <p class="text-xs font-black text-[#8C533E]">Qard al-Hassan</p>
-                </div>
-            </div>
-
-            <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
-                <button class="brand-copper-btn px-6 py-3.5 rounded-2xl font-extrabold text-sm shadow-lg flex items-center gap-2">
-                    <i data-lucide="download" class="w-4 h-4"></i> Get JOURNEY+ App
-                </button>
-                <button onclick="openModal('splitModal')" class="bg-white border-2 border-[#C68B59]/40 text-[#8C533E] hover:bg-stone-50 px-6 py-3.5 rounded-2xl font-extrabold text-sm shadow-sm flex items-center gap-2">
-                    <i data-lucide="users" class="w-4 h-4"></i> Split Travel Bill
-                </button>
-            </div>
-        </div>
-
-        <!-- Phone App Showcase -->
-        <div class="lg:col-span-5 flex justify-center">
-            <div class="relative w-full max-w-sm bg-stone-900 p-4 rounded-[42px] shadow-2xl border-4 border-stone-800">
-                <div class="bg-[#FAF4F0] rounded-[32px] p-5 space-y-4 overflow-hidden">
+            <!-- Hero Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 text-[#8C533E] text-xs font-extrabold border border-amber-200">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> 100% Shariah-Compliant Cross-Border E-Wallet
+                    </div>
                     
-                    <div class="flex justify-between items-center border-b border-stone-200/60 pb-3">
-                        <div>
-                            <p class="text-[10px] uppercase font-bold text-stone-400">JOURNEY+ E-Wallet</p>
-                            <p class="text-lg font-black text-[#4A3B32]">RM 12,450.80 <span class="text-[10px] text-emerald-600 font-bold">● Wadiah Safekeep</span></p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full brand-copper-btn flex items-center justify-center font-bold text-xs">MY</div>
-                    </div>
+                    <h1 class="text-4xl sm:text-5xl font-extrabold text-[#4A3B32] leading-tight">
+                        Your All-in-One Travel, Financial & <span class="text-copper-gradient">Faith Companion</span>
+                    </h1>
+                    
+                    <p class="text-stone-600 text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
+                        Hold worldwide balances, exchange foreign currencies instantly, split group travel costs automatically, and stay on top of prayer times anywhere on Earth.
+                    </p>
 
-                    <!-- Multi-currency wallet preview -->
-                    <div class="brand-copper-btn p-4 rounded-2xl text-white shadow-md">
-                        <div class="flex justify-between text-[10px] font-bold opacity-80 uppercase">
-                            <span>Travel Pocket</span>
-                            <span>Tokyo Trip 2026</span>
-                        </div>
-                        <p class="text-2xl font-bold mt-1">¥ 150,000 JPY</p>
-                        <p class="text-[11px] opacity-90 mt-1">Converted via Bay' al-Sarf (Spot FX)</p>
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
+                        <button onclick="showPage('splitbill')" class="brand-copper-btn px-6 py-3.5 rounded-2xl font-extrabold text-sm shadow-lg flex items-center gap-2">
+                            <i data-lucide="scissors" class="w-4 h-4"></i> Try Split Bill Engine
+                        </button>
+                        <button onclick="showPage('itinerary')" class="bg-white border-2 border-[#C68B59]/40 text-[#8C533E] hover:bg-stone-50 px-6 py-3.5 rounded-2xl font-extrabold text-sm shadow-sm flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i> Explore Hatyai Trip Plan
+                        </button>
                     </div>
+                </div>
 
-                    <!-- Solat Widget -->
-                    <div class="bg-emerald-800 text-white p-3 rounded-2xl flex items-center justify-between">
-                        <div class="flex items-center gap-2.5">
-                            <i data-lucide="compass" class="w-5 h-5 text-amber-300"></i>
-                            <div>
-                                <p class="text-[10px] text-emerald-200 font-bold uppercase">JourneySolat • Qibla 292°</p>
-                                <p class="text-xs font-extrabold">Asr in 42 mins (Traveler Jam')</p>
+                <!-- Phone App Showcase -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-sm bg-stone-900 p-4 rounded-[42px] shadow-2xl border-4 border-stone-800">
+                        <div class="bg-[#FAF4F0] rounded-[32px] p-5 space-y-4 overflow-hidden">
+                            
+                            <div class="flex justify-between items-center border-b border-stone-200/60 pb-3">
+                                <div>
+                                    <p class="text-[10px] uppercase font-bold text-stone-400">JOURNEY+ Wallet</p>
+                                    <p class="text-lg font-black text-[#4A3B32]">RM 12,450.80 <span class="text-[10px] text-emerald-600 font-bold">● Wadiah Active</span></p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full brand-copper-btn flex items-center justify-center font-bold text-xs">MY</div>
                             </div>
+
+                            <!-- Mini Wallet Card -->
+                            <div class="brand-copper-btn p-4 rounded-2xl text-white shadow-md">
+                                <div class="flex justify-between text-[10px] font-bold opacity-80 uppercase">
+                                    <span>Active Travel Currency</span>
+                                    <span>Hatyai Trip</span>
+                                </div>
+                                <p class="text-2xl font-bold mt-1">฿ 14,500 THB</p>
+                                <p class="text-[11px] opacity-90 mt-1">Bay' al-Sarf Spot Rate • 0% Markup</p>
+                            </div>
+
+                            <!-- Quick Navigation Grid -->
+                            <div class="grid grid-cols-3 gap-2 text-center text-[11px] font-bold">
+                                <div onclick="showPage('savings')" class="bg-white p-3 rounded-xl border border-stone-200 cursor-pointer hover:border-[#C68B59] transition">
+                                    <i data-lucide="vault" class="w-4 h-4 mx-auto text-[#8C533E] mb-1"></i> Savings
+                                </div>
+                                <div onclick="showPage('splitbill')" class="bg-white p-3 rounded-xl border border-stone-200 cursor-pointer hover:border-[#C68B59] transition">
+                                    <i data-lucide="users" class="w-4 h-4 mx-auto text-[#8C533E] mb-1"></i> Split Bill
+                                </div>
+                                <div onclick="showPage('tracker')" class="bg-white p-3 rounded-xl border border-stone-200 cursor-pointer hover:border-[#C68B59] transition">
+                                    <i data-lucide="pie-chart" class="w-4 h-4 mx-auto text-[#8C533E] mb-1"></i> Budget
+                                </div>
+                            </div>
+
                         </div>
-                        <span class="text-[10px] bg-emerald-700 px-2 py-1 rounded-md font-bold">GPS Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CORE FEATURES GRID (KEPT PRESERVED LAYOUT YOU LOVED) -->
+            <section class="pt-8">
+                <div class="text-center max-w-3xl mx-auto mb-12 space-y-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-[#C68B59]">Everything You Need</span>
+                    <h2 class="text-3xl font-extrabold text-[#4A3B32]">Explore Core Capabilities</h2>
+                    <p class="text-stone-600 text-sm">Click any feature card to launch its dedicated app page.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <!-- 1. Savings (Wadiah - Safe Vault Icon) -->
+                    <div onclick="showPage('savings')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-100 text-[#8C533E] flex items-center justify-center font-bold">
+                            <i data-lucide="vault" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">Money Savings</h3>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-50 text-[#8C533E] text-[11px] font-bold border border-amber-200">Wadiah Yad Amanah</span>
+                        <p class="text-xs text-stone-500 leading-relaxed">Guaranteed capital safekeeping in trust accounts without interest or investment risk.</p>
                     </div>
 
-                    <!-- Actions -->
-                    <div class="grid grid-cols-4 gap-2 text-center text-[11px] font-bold">
-                        <div onclick="openModal('saveModal')" class="bg-white p-2.5 rounded-xl border border-stone-200 cursor-pointer hover:border-[#C68B59]">
-                            <i data-lucide="piggy-bank" class="w-4 h-4 mx-auto text-[#8C533E] mb-1"></i> Savings
+                    <!-- 2. Currency Exchange -->
+                    <div onclick="scrollToSection('calculator-box')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
+                        <div class="w-10 h-10 rounded-2xl bg-cyan-100 text-cyan-800 flex items-center justify-center font-bold">
+                            <i data-lucide="arrow-right-left" class="w-5 h-5"></i>
                         </div>
-                        <div onclick="openModal('investModal')" class="bg-white p-2.5 rounded-xl border border-stone-200 cursor-pointer hover:border-[#C68B59]">
-                            <i data-lucide="trending-up" class="w-4 h-4 mx-auto text-[#8C533E] mb-1"></i> Invest
+                        <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">Global FX Exchange</h3>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-cyan-50 text-cyan-800 text-[11px] font-bold border border-cyan-200">Bay' al-Sarf</span>
+                        <p class="text-xs text-stone-500 leading-relaxed">Real-time spot currency sales with immediate possession & zero deferred settlement delays.</p>
+                    </div>
+
+                    <!-- 3. Split Bill -->
+                    <div onclick="showPage('splitbill')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
+                        <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-800 flex items-center justify-center font-bold">
+                            <i data-lucide="scissors" class="w-5 h-5"></i>
                         </div>
-                        <div onclick="openModal('itineraryModal')" class="bg-white p-2.5 rounded-xl border border-stone-200 cursor-pointer hover:border-[#C68B59]">
-                            <i data-lucide="map-pin" class="w-4 h-4 mx-auto text-[#8C533E] mb-1"></i> Itinerary
+                        <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">Group Split Bill</h3>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-800 text-[11px] font-bold border border-purple-200">Qard al-Hassan</span>
+                        <p class="text-xs text-stone-500 leading-relaxed">Equal or separate bill splitting with automatic trip group folder organization.</p>
+                    </div>
+
+                    <!-- 4. Investment -->
+                    <div onclick="showPage('invest')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
                         </div>
-                        <div onclick="openModal('trackerModal')" class="bg-white p-2.5 rounded-xl border border-stone-200 cursor-pointer hover:border-[#C68B59]">
-                            <i data-lucide="pie-chart" class="w-4 h-4 mx-auto text-[#8C533E] mb-1"></i> Budget
+                        <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">Shariah Investment</h3>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">Musyarakah & Wakalah</span>
+                        <p class="text-xs text-stone-500 leading-relaxed">Profit-sharing pooled ventures with explicit consent (Idhn) and licensed fund managers.</p>
+                    </div>
+
+                    <!-- 5. Travel Itinerary -->
+                    <div onclick="showPage('itinerary')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
+                        <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold">
+                            <i data-lucide="map-pin" class="w-5 h-5"></i>
                         </div>
+                        <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">Hatyai Trip Planner</h3>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-800 text-[11px] font-bold border border-indigo-200">Smart Itinerary</span>
+                        <p class="text-xs text-stone-500 leading-relaxed">Complete 1-day itinerary with Halal restaurant finders and route optimization.</p>
+                    </div>
+
+                    <!-- 6. Spending Tracker -->
+                    <div onclick="showPage('tracker')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                            <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">Spending Tracker</h3>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 text-[11px] font-bold border border-amber-200">Pie Analytics</span>
+                        <p class="text-xs text-stone-500 leading-relaxed">Visual expense pie chart breakdown by food, hotel, transport, and shopping.</p>
+                    </div>
+
+                    <!-- 7. JourneySolat -->
+                    <div onclick="showPage('solat')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-bold">
+                            <i data-lucide="compass" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">JourneySolat</h3>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-900 text-[11px] font-bold border border-emerald-200">AR Qiblah Finder</span>
+                        <p class="text-xs text-stone-500 leading-relaxed">GPS prayer times and AR compass overlays for combined traveler prayers (Jam').</p>
+                    </div>
+
+                    <!-- 8. About Story -->
+                    <div onclick="showPage('about')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
+                        <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-800 flex items-center justify-center font-bold">
+                            <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">About JOURNEY+</h3>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-rose-50 text-rose-800 text-[11px] font-bold border border-rose-200">Our Founder Story</span>
+                        <p class="text-xs text-stone-500 leading-relaxed">Read how a stressful group trip inspired us to build Malaysia's top travel e-wallet.</p>
                     </div>
 
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- SECTION 1.0 & 2.0: ABOUT JOURNEY+ SDN BHD & COMPANY STRUCTURE -->
-    <section id="about" class="bg-white py-16 border-y border-stone-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            
-            <div class="text-center max-w-3xl mx-auto space-y-3">
-                <span class="text-xs font-bold uppercase tracking-wider text-[#C68B59]">1.0 & 2.0 Company Background</span>
-                <h2 class="text-3xl font-extrabold text-[#4A3B32]">About JOURNEY+ Sdn. Bhd.</h2>
-                <p class="text-stone-600 text-sm leading-relaxed">
-                    JOURNEY+ Sdn. Bhd. is a dedicated fintech innovation firm established to empower global Muslim travelers, students, and families with faith-aligned financial digital solutions.
-                </p>
-            </div>
-
-            <!-- Company Info & Address Box -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-[#FAF4F0] p-6 rounded-3xl border border-[#EFE4DC] flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-2xl brand-copper-btn flex items-center justify-center shrink-0">
-                        <i data-lucide="building-2" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-[#4A3B32]">Registered Entity</h4>
-                        <p class="text-xs text-stone-600 font-semibold mt-1">JOURNEY+ SDN. BHD.</p>
-                        <p class="text-[11px] text-stone-400 mt-1">Class-B E-Money Fintech Licensee</p>
-                    </div>
-                </div>
-
-                <div class="bg-[#FAF4F0] p-6 rounded-3xl border border-[#EFE4DC] flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-2xl brand-copper-btn flex items-center justify-center shrink-0">
-                        <i data-lucide="map-pin" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-[#4A3B32]">Headquarters Address</h4>
-                        <p class="text-xs text-stone-600 leading-snug mt-1">
-                            Block B-03-01, Tamarind Square, Persiaran Multimedia, Cyber 10, 63000 Cyberjaya, Selangor Darul Ehsan, Malaysia.
+            <!-- LIVE WORLD CURRENCY CALCULATOR (NOW FEATURING ALL WORLD CURRENCIES) -->
+            <section id="calculator-box" class="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-[#C68B59]">Global Currency Engine</span>
+                        <h2 class="text-2xl font-extrabold text-[#4A3B32]">Worldwide Real-Time FX Conversion</h2>
+                        <p class="text-stone-600 text-xs leading-relaxed">
+                            Convert Ringgit Malaysia into any global currency instantly at transparent mid-market spot rates under the Bay' al-Sarf Shariah contract.
                         </p>
                     </div>
-                </div>
 
-                <div class="bg-[#FAF4F0] p-6 rounded-3xl border border-[#EFE4DC] flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-2xl brand-copper-btn flex items-center justify-center shrink-0">
-                        <i data-lucide="mail" class="w-5 h-5"></i>
+                    <div class="lg:col-span-7 bg-[#FAF4F0] p-6 rounded-2xl border border-[#EFE4DC]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-xs text-[#4A3B32]">Live FX Spot Engine</h3>
+                            <div id="api-status-badge" class="text-xs text-stone-400 flex items-center gap-1">
+                                <span class="spinner"></span> Connecting API...
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-500 mb-1">You Convert (MYR)</label>
+                                <input type="number" id="send-amount" value="500" class="w-full bg-white border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-500 mb-1">To Global Currency</label>
+                                <select id="target-currency" class="w-full bg-white border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
+                                    <option value="THB">THB - Thai Baht 🇹🇭</option>
+                                    <option value="USD">USD - US Dollar 🇺🇸</option>
+                                    <option value="EUR">EUR - Euro 🇪🇺</option>
+                                    <option value="JPY">JPY - Japanese Yen 🇯🇵</option>
+                                    <option value="SGD">SGD - Singapore Dollar 🇸🇬</option>
+                                    <option value="GBP">GBP - British Pound 🇬🇧</option>
+                                    <option value="AUD">AUD - Australian Dollar 🇦🇺</option>
+                                    <option value="IDR">IDR - Indonesian Rupiah 🇮🇩</option>
+                                    <option value="SAR">SAR - Saudi Riyal 🇸🇦</option>
+                                    <option value="AED">AED - UAE Dirham 🇦🇪</option>
+                                    <option value="KRW">KRW - South Korean Won 🇰🇷</option>
+                                    <option value="CNY">CNY - Chinese Yuan 🇨🇳</option>
+                                    <option value="CAD">CAD - Canadian Dollar 🇨🇦</option>
+                                    <option value="CHF">CHF - Swiss Franc 🇨🇭</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 bg-white p-4 rounded-xl border border-stone-200 flex justify-between items-center">
+                            <div>
+                                <p class="text-[11px] text-stone-400">Recipient Receives:</p>
+                                <p id="receive-amount" class="text-2xl font-black text-[#8C533E]">Calculating...</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[11px] text-stone-400">Live Spot Rate:</p>
+                                <p id="live-rate-display" class="text-xs font-bold text-stone-700">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- PAGE 2: ABOUT JOURNEY+ (SIMPLE & BELIEVABLE FOUNDER STORY) -->
+        <div id="page-about" class="page-view space-y-12">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#C68B59]">Our Founding Journey</span>
+                <h2 class="text-3xl font-extrabold text-[#4A3B32]">How a Messy Group Trip Inspired JOURNEY+</h2>
+                <p class="text-stone-600 text-sm leading-relaxed">
+                    JOURNEY+ was born out of real-world frustration during a group trip across Southeast Asia.
+                </p>
+            </div>
+
+            <!-- Believable Story Card -->
+            <div class="bg-white p-8 sm:p-10 rounded-3xl border border-stone-200 shadow-sm max-w-4xl mx-auto space-y-6">
+                <div class="flex items-center gap-4 border-b border-stone-100 pb-6">
+                    <div class="w-12 h-12 rounded-full brand-copper-btn flex items-center justify-center font-bold text-white text-lg">
+                        J+
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm text-[#4A3B32]">Direct Contact</h4>
-                        <p class="text-xs text-stone-600 font-semibold mt-1">Phone: 017-863 1791</p>
-                        <p class="text-xs text-stone-600 font-semibold">Email: journeywithu@gmail.com</p>
+                        <h3 class="font-extrabold text-lg text-[#4A3B32]">The Story Behind Our Establishment</h3>
+                        <p class="text-xs text-stone-400">Founded in Cyberjaya, Malaysia</p>
                     </div>
+                </div>
+
+                <div class="space-y-4 text-stone-600 text-sm leading-relaxed">
+                    <p>
+                        In late 2024, our founder <strong>Nur Syadiatul Najwa</strong> went on a trip to Thailand with a group of four university friends. What was supposed to be a relaxing getaway quickly turned into a headache every evening at dinner tables.
+                    </p>
+                    <p class="bg-[#FAF4F0] p-4 rounded-2xl border-l-4 border-[#C68B59] text-stone-700 italic">
+                        "One person paid for hotel rooms in Malaysian Ringgit, another covered dinner in Thai Baht, and someone else bought train tickets online in USD. At the end of every day, we spent hours with notebooks, phone calculators, and dynamic exchange rates trying to figure out who owed what."
+                    </p>
+                    <p>
+                        To make matters worse, existing money apps added hidden foreign currency markup fees, and none of them catered to Muslim travelers who wanted transparent Shariah-compliant safekeeping and instant prayer direction indicators while navigating unfamiliar foreign cities.
+                    </p>
+                    <p>
+                        That was the lightbulb moment. The team assembled at Tamarind Square, Cyberjaya, to build <strong>JOURNEY+</strong>: an all-in-one Shariah e-wallet combining Wadiah savings, spot FX currency conversion, automated group bill splitting, and faith-aligned travel tools under one single roof.
+                    </p>
                 </div>
             </div>
 
-            <!-- Organization Structure -->
-            <div id="structure" class="pt-6">
-                <h3 class="text-xl font-bold text-[#4A3B32] text-center mb-8">Executive Leadership & Management Team</h3>
+            <!-- Simple Leadership Team Showcase -->
+            <div class="max-w-4xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-[#4A3B32] text-center">Meet Our Leadership Team</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <!-- Director -->
-                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2 shadow-sm">
+                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2">
                         <div class="w-12 h-12 rounded-full bg-amber-100 text-[#8C533E] font-black text-sm flex items-center justify-center mx-auto">NS</div>
                         <h4 class="font-extrabold text-sm text-[#4A3B32]">Nur Syadiatul Najwa</h4>
-                        <span class="inline-block px-2.5 py-0.5 rounded-full bg-amber-100 text-[#8C533E] text-[10px] font-bold">Director</span>
-                        <p class="text-[11px] text-stone-500 leading-tight">Sets long-term vision, strategic partnerships, and corporate direction.</p>
+                        <p class="text-xs font-bold text-[#8C533E]">Founder & Director</p>
                     </div>
-
-                    <!-- Financial Manager -->
-                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2 shadow-sm">
+                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2">
                         <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 font-black text-sm flex items-center justify-center mx-auto">RN</div>
                         <h4 class="font-extrabold text-sm text-[#4A3B32]">Raissa Nadine</h4>
-                        <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">Financial Manager</span>
-                        <p class="text-[11px] text-stone-500 leading-tight">Manages company treasury, payroll, financial budgets, and profitability.</p>
+                        <p class="text-xs font-bold text-emerald-800">Financial Manager</p>
                     </div>
-
-                    <!-- Marketing Manager -->
-                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2 shadow-sm">
+                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2">
                         <div class="w-12 h-12 rounded-full bg-cyan-100 text-cyan-800 font-black text-sm flex items-center justify-center mx-auto">SU</div>
-                        <h4 class="font-extrabold text-sm text-[#4A3B32]">Siti Umairah Insyirah</h4>
-                        <span class="inline-block px-2.5 py-0.5 rounded-full bg-cyan-100 text-cyan-800 text-[10px] font-bold">Marketing Manager</span>
-                        <p class="text-[11px] text-stone-500 leading-tight">Leads brand campaigns, user acquisition, and market research.</p>
+                        <h4 class="font-extrabold text-sm text-[#4A3B32]">Siti Umairah</h4>
+                        <p class="text-xs font-bold text-cyan-800">Marketing Manager</p>
                     </div>
-
-                    <!-- Operation Manager -->
-                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2 shadow-sm">
+                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2">
                         <div class="w-12 h-12 rounded-full bg-purple-100 text-purple-800 font-black text-sm flex items-center justify-center mx-auto">AI</div>
                         <h4 class="font-extrabold text-sm text-[#4A3B32]">Asma Izzah</h4>
-                        <span class="inline-block px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-bold">Operation Manager</span>
-                        <p class="text-[11px] text-stone-500 leading-tight">Ensures daily operational execution, quality standards, and compliance.</p>
+                        <p class="text-xs font-bold text-purple-800">Operation Manager</p>
                     </div>
-
-                    <!-- HR Manager -->
-                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2 shadow-sm">
+                    <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center space-y-2">
                         <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-800 font-black text-sm flex items-center justify-center mx-auto">NA</div>
                         <h4 class="font-extrabold text-sm text-[#4A3B32]">Nur Anis Solehah</h4>
-                        <span class="inline-block px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-bold">HR Manager</span>
-                        <p class="text-[11px] text-stone-500 leading-tight">Oversees talent recruitment, staff training, and workplace culture.</p>
+                        <p class="text-xs font-bold text-rose-800">HR Manager</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: ADVANCED SPLIT BILL PAGE (EQUAL / SEPARATE + TRIP GROUPS) -->
+        <div id="page-splitbill" class="page-view space-y-8">
+            <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-[#4A3B32]">Group Split Bill Engine</h2>
+                    <p class="text-xs text-stone-500">Qard al-Hassan Interest-Free Group Debt Settlement</p>
+                </div>
+                <button onclick="showPage('home')" class="text-xs font-bold text-[#8C533E] hover:underline">← Back to Home</button>
+            </div>
+
+            <!-- Trip Group Folders Selector -->
+            <div>
+                <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Select Active Travel Group Folder:</label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-2xl border-2 border-[#C68B59] shadow-sm flex items-center justify-between cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🇹🇭</span>
+                            <div>
+                                <h4 class="font-bold text-sm text-[#4A3B32]">Hatyai Foodie Trip</h4>
+                                <p class="text-[11px] text-stone-400">4 Members • THB (฿)</p>
+                            </div>
+                        </div>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-stone-200 opacity-60 hover:opacity-100 transition cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🇹🇷</span>
+                            <div>
+                                <h4 class="font-bold text-sm text-[#4A3B32]">Turkey Explorer 2026</h4>
+                                <p class="text-[11px] text-stone-400">6 Members • TRY (₺)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-stone-200 opacity-60 hover:opacity-100 transition cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🏝️</span>
+                            <div>
+                                <h4 class="font-bold text-sm text-[#4A3B32]">Langkawi Island Escape</h4>
+                                <p class="text-[11px] text-stone-400">3 Members • MYR (RM)</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-        </div>
-    </section>
-
-    <!-- SECTION 3.0 OUR PRODUCT ECOSYSTEM & SHARIAH CONTRACTS -->
-    <section id="ecosystem" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <span class="text-xs font-bold uppercase tracking-wider text-[#C68B59]">3.0 Product Framework</span>
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-[#4A3B32]">8 Core Features Powered by Islamic Contracts</h2>
-            <p class="text-stone-600 text-sm">Every feature inside JOURNEY+ is engineered under verified Shariah contracts to eliminate Riba, Gharar, and Maysir.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            <!-- 1. Savings -->
-            <div onclick="openModal('saveModal')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-[#8C533E] flex items-center justify-center font-bold">
-                    <i data-lucide="piggy-bank" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">1. Money Savings</h3>
-                <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-50 text-[#8C533E] text-[11px] font-bold border border-amber-200">Wadiah Yad Amanah</span>
-                <p class="text-xs text-stone-500 leading-relaxed">Guaranteed capital safekeeping in trust accounts without interest or investment risk.</p>
-            </div>
-
-            <!-- 2. Currency Exchange -->
-            <div onclick="openModal('calculator')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-cyan-100 text-cyan-800 flex items-center justify-center font-bold">
-                    <i data-lucide="arrow-right-left" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">2. Foreign Exchange</h3>
-                <span class="inline-block px-2.5 py-0.5 rounded-md bg-cyan-50 text-cyan-800 text-[11px] font-bold border border-cyan-200">Bay' al-Sarf</span>
-                <p class="text-xs text-stone-500 leading-relaxed">Real-time spot currency sales with immediate possession (Taqabudh) & zero deferred settlement delays.</p>
-            </div>
-
-            <!-- 3. Split Bill -->
-            <div onclick="openModal('splitModal')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-800 flex items-center justify-center font-bold">
-                    <i data-lucide="scissors" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">3. Group Split Bill</h3>
-                <span class="inline-block px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-800 text-[11px] font-bold border border-purple-200">Qard al-Hassan</span>
-                <p class="text-xs text-stone-500 leading-relaxed">Interest-free debt repayment engine with OCR receipt scanner and auto multi-currency netting.</p>
-            </div>
-
-            <!-- 4. Investment -->
-            <div onclick="openModal('investModal')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
-                    <i data-lucide="trending-up" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">4. Investment</h3>
-                <span class="inline-block px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">Musyarakah & Wakalah</span>
-                <p class="text-xs text-stone-500 leading-relaxed">Profit-sharing pooled ventures with explicit consent (Idhn) and licensed fund manager execution.</p>
-            </div>
-
-            <!-- 5. Zakat & Charity -->
-            <div onclick="openModal('zakatModal')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-800 flex items-center justify-center font-bold">
-                    <i data-lucide="heart" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">5. Zakat & Charity</h3>
-                <span class="inline-block px-2.5 py-0.5 rounded-md bg-rose-50 text-rose-800 text-[11px] font-bold border border-rose-200">Wakalah Agency</span>
-                <p class="text-xs text-stone-500 leading-relaxed">Direct automated Zakat calculation and 100% full payout to state Lembaga Zakat bodies with tax receipts.</p>
-            </div>
-
-            <!-- 6. Travel Itinerary -->
-            <div onclick="openModal('itineraryModal')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold">
-                    <i data-lucide="map-pin" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">6. Smart Itinerary</h3>
-                <span class="inline-block px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-800 text-[11px] font-bold border border-indigo-200">Halal Travel AI</span>
-                <p class="text-xs text-stone-500 leading-relaxed">AI route builder, verified Halal restaurant recommendations, and attraction price comparators.</p>
-            </div>
-
-            <!-- 7. Spending Tracker -->
-            <div onclick="openModal('trackerModal')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
-                    <i data-lucide="pie-chart" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">7. Spending Tracker</h3>
-                <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 text-[11px] font-bold border border-amber-200">Budget Analytics</span>
-                <p class="text-xs text-stone-500 leading-relaxed">Monthly and trip-specific category tracking with threshold alert notifications.</p>
-            </div>
-
-            <!-- 8. JourneySolat -->
-            <div onclick="openModal('solatModal')" class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer space-y-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-bold">
-                    <i data-lucide="compass" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-extrabold text-lg text-[#4A3B32] group-hover:text-[#8C533E] transition">8. JourneySolat</h3>
-                <span class="inline-block px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-900 text-[11px] font-bold border border-emerald-200">AR Qiblah Finder</span>
-                <p class="text-xs text-stone-500 leading-relaxed">Camera-overlay Qiblah compass, auto GPS prayer timing, and Jam' & Qasr traveler modes.</p>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- LIVE CURRENCY CALCULATOR SECTION -->
-    <section id="calculator" class="bg-white py-16 border-t border-stone-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div class="lg:col-span-5 space-y-4">
-                <span class="text-xs font-bold uppercase tracking-wider text-[#C68B59]">Bay' al-Sarf Execution</span>
-                <h2 class="text-3xl font-extrabold text-[#4A3B32]">Real-Time Spot Foreign Exchange Engine</h2>
-                <p class="text-stone-600 text-sm leading-relaxed">
-                    Under Shariah rules of Bay' al-Sarf, currency exchange must occur on the spot with immediate possession (Taqabudh). JOURNEY+ locks in real market rates transparently without hidden Riba markup.
-                </p>
-            </div>
-
-            <!-- Calculator Component -->
-            <div class="lg:col-span-7 bg-[#FAF4F0] p-6 rounded-3xl border border-[#EFE4DC] shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-sm text-[#4A3B32]">Live FX Spot Calculator</h3>
-                    <div id="api-status-badge" class="text-xs text-stone-400 flex items-center gap-1">
-                        <span class="spinner"></span> Connecting API...
-                    </div>
+            <!-- Split Calculator Form -->
+            <div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm max-w-2xl mx-auto space-y-6">
+                <!-- Split Mode Toggle -->
+                <div class="flex bg-stone-100 p-1.5 rounded-2xl">
+                    <button id="btn-split-equal" onclick="setSplitMode('equal')" class="flex-1 py-2 rounded-xl text-xs font-extrabold bg-white shadow-sm text-[#8C533E]">
+                        Equal Split (50/50)
+                    </button>
+                    <button id="btn-split-custom" onclick="setSplitMode('custom')" class="flex-1 py-2 rounded-xl text-xs font-extrabold text-stone-500 hover:text-stone-800">
+                        Itemized / Separate Split
+                    </button>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-stone-500 mb-1">You Convert (MYR)</label>
-                        <input type="number" id="send-amount" value="500" class="w-full bg-white border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
+                        <label class="block text-xs font-semibold text-stone-500 mb-1">Total Bill Amount Paid</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="split-total" value="3600" oninput="calculateSplit()" class="w-2/3 bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800 text-lg">
+                            <select id="split-currency" onchange="calculateSplit()" class="w-1/3 bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
+                                <option value="THB">THB (฿)</option>
+                                <option value="MYR">MYR (RM)</option>
+                                <option value="USD">USD ($)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-stone-500 mb-1">To Foreign Currency</label>
-                        <select id="target-currency" class="w-full bg-white border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
-                            <option value="USD">USD - US Dollar</option>
-                            <option value="JPY">JPY - Japanese Yen</option>
-                            <option value="EUR">EUR - Euro</option>
-                            <option value="SGD">SGD - Singapore Dollar</option>
-                            <option value="GBP">GBP - British Pound</option>
-                            <option value="THB">THB - Thai Baht</option>
+                        <label class="block text-xs font-semibold text-stone-500 mb-1">Split Among (Total Persons)</label>
+                        <input type="number" id="split-people" value="4" min="2" max="10" oninput="calculateSplit()" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
+                    </div>
+
+                    <!-- Breakdown Result Display -->
+                    <div class="bg-[#FAF4F0] p-5 rounded-2xl border border-[#EFE4DC] space-y-2">
+                        <p class="text-xs text-stone-500 font-semibold">Each Person's Share (Auto-Converted to MYR):</p>
+                        <p id="split-per-person" class="text-3xl font-black text-[#8C533E]">RM 0.00</p>
+                        <p class="text-[11px] text-stone-400">*Calculated under Qard al-Hassan with 0% interest on debts.</p>
+                    </div>
+
+                    <button onclick="alert('Payment request links sent to Hatyai Trip Group members!')" class="w-full brand-copper-btn py-3.5 rounded-xl font-bold text-sm shadow-md">
+                        Send WhatsApp Payment Request Links
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 4: SPENDING TRACKER PAGE (WITH INTERACTIVE PIE CHART) -->
+        <div id="page-tracker" class="page-view space-y-8">
+            <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-[#4A3B32]">Travel Spending Tracker & Analytics</h2>
+                    <p class="text-xs text-stone-500">Visual Pie Chart Breakdown for Your Hatyai Vacation</p>
+                </div>
+                <button onclick="showPage('home')" class="text-xs font-bold text-[#8C533E] hover:underline">← Back to Home</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Pie Chart Container -->
+                <div class="lg:col-span-6 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex flex-col items-center">
+                    <h3 class="font-bold text-sm text-[#4A3B32] mb-4">Expenses Category Breakdown</h3>
+                    <div class="w-full max-w-xs">
+                        <canvas id="spendingPieChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Expense Summary List -->
+                <div class="lg:col-span-6 space-y-4">
+                    <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-3">
+                        <div class="flex justify-between items-center border-b border-stone-100 pb-3">
+                            <div>
+                                <p class="text-xs font-bold text-stone-400 uppercase">Total Trip Budget</p>
+                                <p class="text-2xl font-black text-[#4A3B32]">RM 2,500.00</p>
+                            </div>
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">On Track</span>
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#C68B59]"></span> Food & Dining</span>
+                                <span>RM 850.00 (34%)</span>
+                            </div>
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#8C533E]"></span> Accommodation</span>
+                                <span>RM 700.00 (28%)</span>
+                            </div>
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#00D2FF]"></span> Transport & Trains</span>
+                                <span>RM 450.00 (18%)</span>
+                            </div>
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#B59CFF]"></span> Souvenirs & Shopping</span>
+                                <span>RM 300.00 (12%)</span>
+                            </div>
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#FF8A9A]"></span> Sightseeing Tickets</span>
+                                <span>RM 200.00 (8%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 5: COMPLETE 1-DAY HATYAI ITINERARY PAGE -->
+        <div id="page-itinerary" class="page-view space-y-8">
+            <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-[#4A3B32]">Complete 1-Day Hatyai Halal Travel Plan</h2>
+                    <p class="text-xs text-stone-500">Route-Optimized Timeline with Verified Halal Restaurants & Ticket Prices</p>
+                </div>
+                <button onclick="showPage('home')" class="text-xs font-bold text-[#8C533E] hover:underline">← Back to Home</button>
+            </div>
+
+            <div class="space-y-6 max-w-4xl mx-auto">
+                
+                <!-- Morning Stop -->
+                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex flex-col sm:flex-row gap-6 items-start">
+                    <div class="bg-amber-100 text-[#8C533E] px-4 py-2 rounded-2xl font-black text-sm shrink-0">
+                        08:30 AM
+                    </div>
+                    <div class="space-y-2 flex-grow">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-extrabold text-base text-[#4A3B32]">Dim Sum Breakfast @ Chabura Dimsum</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">✓ 100% Halal Certified</span>
+                        </div>
+                        <p class="text-xs text-stone-600">Start your morning with legendary hot Halal dim sum and Thai iced tea in Hatyai town center.</p>
+                        <p class="text-[11px] text-stone-400">Estimated Cost: ฿180 THB (~RM 23.50) / person</p>
+                    </div>
+                </div>
+
+                <!-- Mid-Day Stop -->
+                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex flex-col sm:flex-row gap-6 items-start">
+                    <div class="bg-amber-100 text-[#8C533E] px-4 py-2 rounded-2xl font-black text-sm shrink-0">
+                        11:30 AM
+                    </div>
+                    <div class="space-y-2 flex-grow">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-extrabold text-base text-[#4A3B32]">Songkhla Central Mosque (Phra Maha Chedi)</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-[10px] font-bold">Prayer Stop</span>
+                        </div>
+                        <p class="text-xs text-stone-600">Perform Dhuhr & Asr (Jam' Shortened Prayer mode active via JourneySolat). Known as the Taj Mahal of Thailand.</p>
+                        <p class="text-[11px] text-stone-400">Entrance Fee: FREE</p>
+                    </div>
+                </div>
+
+                <!-- Afternoon Stop -->
+                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex flex-col sm:flex-row gap-6 items-start">
+                    <div class="bg-amber-100 text-[#8C533E] px-4 py-2 rounded-2xl font-black text-sm shrink-0">
+                        03:30 PM
+                    </div>
+                    <div class="space-y-2 flex-grow">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-extrabold text-base text-[#4A3B32]">Khlong Hae Floating Market</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-cyan-100 text-cyan-800 text-[10px] font-bold">Local Attraction</span>
+                        </div>
+                        <p class="text-xs text-stone-600">Experience eco-friendly bamboo boat vendors selling local traditional snacks and fresh coconut drinks.</p>
+                        <p class="text-[11px] text-stone-400">Estimated Spending: ฿250 THB (~RM 32.80)</p>
+                    </div>
+                </div>
+
+                <!-- Evening Night Market -->
+                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex flex-col sm:flex-row gap-6 items-start">
+                    <div class="bg-amber-100 text-[#8C533E] px-4 py-2 rounded-2xl font-black text-sm shrink-0">
+                        07:00 PM
+                    </div>
+                    <div class="space-y-2 flex-grow">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-extrabold text-base text-[#4A3B32]">Lee Garden Plaza Night Market Shopping</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-bold">Shopping & Dinner</span>
+                        </div>
+                        <p class="text-xs text-stone-600">Dinner at Hamid Restaurant (Halal Thai Tom Yum) followed by street market souvenir shopping.</p>
+                        <p class="text-[11px] text-stone-400">Estimated Cost: ฿400 THB (~RM 52.50)</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PAGE 6: WADIAH SAVINGS PAGE (SAFE VAULT ICON) -->
+        <div id="page-savings" class="page-view space-y-8">
+            <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-[#4A3B32]">Money Savings Pockets</h2>
+                    <p class="text-xs text-stone-500">Wadiah Yad Amanah Safekeeping (100% Guaranteed Principal)</p>
+                </div>
+                <button onclick="showPage('home')" class="text-xs font-bold text-[#8C533E] hover:underline">← Back to Home</button>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm max-w-xl mx-auto space-y-6">
+                <div class="flex items-center gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-200 text-xs">
+                    <i data-lucide="vault" class="w-6 h-6 text-[#8C533E] shrink-0"></i>
+                    <p class="text-stone-700">Your savings are kept safely under <strong>Wadiah Yad Amanah</strong>. No interest (Riba) is added, and zero capital risk is borne by you.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-stone-500 mb-1">Savings Goal Name</label>
+                        <input type="text" value="Hatyai Vacation Pocket" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-stone-500 mb-1">Target Savings Amount (RM)</label>
+                        <input type="number" value="2000" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
+                    </div>
+                    <button onclick="alert('Savings Goal Created Successfully under Wadiah Trust Account!')" class="w-full brand-copper-btn py-3.5 rounded-xl font-bold text-sm">
+                        Create Savings Goal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 7: SHARIAH INVESTMENT PAGE -->
+        <div id="page-invest" class="page-view space-y-8">
+            <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-[#4A3B32]">Shariah Investment Portfolios</h2>
+                    <p class="text-xs text-stone-500">Musyarakah Profit-Sharing & Wakalah Agency Execution</p>
+                </div>
+                <button onclick="showPage('home')" class="text-xs font-bold text-[#8C533E] hover:underline">← Back to Home</button>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm max-w-xl mx-auto space-y-6">
+                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 text-xs space-y-1">
+                    <p class="font-bold text-emerald-900">Shariah Agreement: Musyarakah Partnership</p>
+                    <p class="text-stone-600">Profits shared according to agreed ratio; losses shared by capital contribution. Explicit consent (Idhn) required to transfer Wadiah funds.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-stone-500 mb-1">Select Halal Portfolio</label>
+                        <select class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
+                            <option>Maybank Islamic Money Market Fund</option>
+                            <option>Global Sukuk Balanced Portfolio</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="mt-4 bg-white p-4 rounded-2xl border border-stone-200 flex justify-between items-center">
-                    <div>
-                        <p class="text-xs text-stone-400">Recipient Receives (Spot Settlement):</p>
-                        <p id="receive-amount" class="text-2xl font-black text-[#8C533E]">Calculating...</p>
+                    <div class="flex items-center gap-2 pt-2">
+                        <input type="checkbox" id="consent-check" class="rounded text-[#C68B59]">
+                        <label for="consent-check" class="text-xs text-stone-600">I grant explicit permission (Idhn) to move funds into Musyarakah venture.</label>
                     </div>
-                    <div class="text-right">
-                        <p class="text-xs text-stone-400">Locked Spot Rate:</p>
-                        <p id="live-rate-display" class="text-xs font-bold text-stone-700">Loading...</p>
-                    </div>
+                    <button onclick="alert('Investment Order Submitted under Musyarakah!')" class="w-full brand-copper-btn py-3.5 rounded-xl font-bold text-sm">
+                        Confirm Shariah Investment
+                    </button>
                 </div>
             </div>
         </div>
-    </section>
+
+        <!-- PAGE 8: JOURNEY SOLAT PAGE -->
+        <div id="page-solat" class="page-view space-y-8">
+            <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-[#4A3B32]">JourneySolat & AR Qiblah Compass</h2>
+                    <p class="text-xs text-stone-500">Auto GPS Location Prayer Schedule with Traveler Jam' & Qasr</p>
+                </div>
+                <button onclick="showPage('home')" class="text-xs font-bold text-[#8C533E] hover:underline">← Back to Home</button>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm max-w-md mx-auto text-center space-y-6">
+                <div class="bg-emerald-800 text-white p-6 rounded-3xl space-y-3 shadow-md">
+                    <i data-lucide="compass" class="w-12 h-12 mx-auto text-amber-300 animate-pulse"></i>
+                    <h3 class="font-extrabold text-lg">AR Qiblah: 292.4° NW</h3>
+                    <p class="text-xs text-emerald-200">Current GPS: Hatyai, Songkhla, Thailand</p>
+                </div>
+
+                <div class="space-y-2 text-xs font-bold text-stone-700">
+                    <div class="flex justify-between p-3 bg-stone-50 rounded-xl"><span>Subuh</span><span>05:14 AM</span></div>
+                    <div class="flex justify-between p-3 bg-stone-50 rounded-xl"><span>Zohor (Jam' Taqdim)</span><span>12:22 PM</span></div>
+                    <div class="flex justify-between p-3 bg-stone-50 rounded-xl"><span>Asar</span><span>03:40 PM</span></div>
+                    <div class="flex justify-between p-3 bg-stone-50 rounded-xl"><span>Maghrib</span><span>06:28 PM</span></div>
+                    <div class="flex justify-between p-3 bg-stone-50 rounded-xl"><span>Isyak</span><span>07:40 PM</span></div>
+                </div>
+
+                <button onclick="alert('Traveler Jam & Qasr Mode Activated!')" class="w-full brand-copper-btn py-3.5 rounded-xl font-bold text-sm">
+                    Activate Traveler Jam' & Qasr Mode
+                </button>
+            </div>
+        </div>
+
+    </main>
 
     <!-- FOOTER -->
-    <footer class="bg-stone-900 text-stone-400 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl brand-copper-btn flex items-center justify-center text-white font-bold text-sm">J+</div>
-                    <span class="text-white font-bold text-lg">JOURNEY+ SDN. BHD.</span>
-                </div>
-                <p class="text-xs text-stone-400 text-center md:text-left">
-                    Tamarind Square, Cyberjaya, Selangor • Regulated E-Wallet Framework
-                </p>
-                <div class="flex gap-4 text-xs">
-                    <a href="#about" class="hover:text-white transition">About Us</a>
-                    <a href="#ecosystem" class="hover:text-white transition">Shariah Contracts</a>
-                    <a href="#structure" class="hover:text-white transition">Team Structure</a>
-                </div>
+    <footer class="bg-stone-900 text-stone-400 py-10 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <div class="flex items-center justify-center gap-2">
+                <div class="w-7 h-7 rounded-full compass-logo-ring flex items-center justify-center text-white font-black text-xs">J+</div>
+                <span class="text-white font-bold text-base">JOURNEY+ SDN. BHD.</span>
             </div>
-            <div class="border-t border-stone-800 pt-6 text-center text-[11px] text-stone-500">
-                © 2026 JOURNEY+ Sdn. Bhd. (Co. Reg. BIFEK3053). All Shariah contracts (Wadiah, Bay' al-Sarf, Qard al-Hassan, Musyarakah, Wakalah) verified by independent Shariah Advisory.
-            </div>
+            <p class="text-xs text-stone-500">Cyberjaya, Selangor • Shariah-Compliant Cross-Border Fintech Platform</p>
+            <p class="text-[11px] text-stone-600">© 2026 JOURNEY+ Sdn. Bhd. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- MODAL: MONEY SAVINGS (WADIAH) -->
-    <div id="saveModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-stone-200 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-[#4A3B32]">Money Savings (Wadiah)</h3>
-                <button onclick="closeModal('saveModal')" class="text-stone-400 text-lg font-bold">✕</button>
-            </div>
-            <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-xs space-y-2">
-                <p class="font-bold text-[#8C533E]">Shariah Contract: Wadiah Yad Amanah</p>
-                <p class="text-stone-600">Funds are entrusted to JOURNEY+ for safekeeping. 100% capital is guaranteed with zero interest (Riba) and zero loss risk.</p>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-stone-500 mb-1">Savings Goal Name</label>
-                <input type="text" value="Hatyai Trip 2026" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-xs text-stone-800">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-stone-500 mb-1">Target Amount (RM)</label>
-                <input type="number" value="1500" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-xs text-stone-800">
-            </div>
-            <button onclick="closeModal('saveModal')" class="w-full brand-copper-btn py-3 rounded-xl font-bold text-sm">Create Savings Pocket</button>
-        </div>
-    </div>
-
-    <!-- MODAL: SPLIT BILL (QARD AL-HASSAN) -->
-    <div id="splitModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-stone-200 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-[#4A3B32]">Split Travel Bill</h3>
-                <button onclick="closeModal('splitModal')" class="text-stone-400 text-lg font-bold">✕</button>
-            </div>
-            <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200 text-xs space-y-1">
-                <p class="font-bold text-purple-900">Shariah Contract: Qard al-Hassan</p>
-                <p class="text-stone-600">Interest-free loan. Members return exact principal debt with zero surplus fee.</p>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-stone-500 mb-1">Total Bill Paid</label>
-                <div class="flex gap-2">
-                    <input type="number" id="split-total" value="12000" oninput="calculateSplit()" class="w-2/3 bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
-                    <select id="split-currency" onchange="calculateSplit()" class="w-1/3 bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
-                        <option value="JPY">JPY (¥)</option>
-                        <option value="USD">USD ($)</option>
-                        <option value="MYR">MYR (RM)</option>
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-stone-500 mb-1">Split Among (Persons)</label>
-                <input type="number" id="split-people" value="4" oninput="calculateSplit()" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-stone-800">
-            </div>
-            <div class="bg-[#FAF4F0] p-4 rounded-2xl border border-[#EFE4DC]">
-                <p class="text-xs text-stone-500 font-semibold">Each Person Pays (MYR Equivalent):</p>
-                <p id="split-per-person" class="text-2xl font-black text-[#8C533E] mt-1">Calculating...</p>
-            </div>
-            <button onclick="closeModal('splitModal')" class="w-full brand-copper-btn py-3 rounded-xl font-bold text-sm">Send Request Links</button>
-        </div>
-    </div>
-
-    <!-- MODAL: INVESTMENT (MUSYARAKAH & WAKALAH) -->
-    <div id="investModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-stone-200 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-[#4A3B32]">Shariah Investment</h3>
-                <button onclick="closeModal('investModal')" class="text-stone-400 text-lg font-bold">✕</button>
-            </div>
-            <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 text-xs space-y-1">
-                <p class="font-bold text-emerald-900">Contracts: Musyarakah & Wakalah</p>
-                <p class="text-stone-600">JOURNEY+ acts as Wakil (Agent). Profits shared by agreed ratio; losses shared by capital share. Requires explicit user permission (Idhn).</p>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-stone-500 mb-1">Select Shariah Product</label>
-                <select class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-xs text-stone-800">
-                    <option>Maybank Islamic Money Market Fund</option>
-                    <option>Sukuk Global Balanced Portfolio</option>
-                </select>
-            </div>
-            <div class="flex items-center gap-2 pt-2">
-                <input type="checkbox" id="consent" class="rounded text-[#C68B59]">
-                <label for="consent" class="text-[11px] text-stone-600 font-semibold">I give explicit consent (Idhn) to transfer Wadiah funds into Musyarakah investment.</label>
-            </div>
-            <button onclick="closeModal('investModal')" class="w-full brand-copper-btn py-3 rounded-xl font-bold text-sm">Confirm Investment</button>
-        </div>
-    </div>
-
-    <!-- MODAL: ZAKAT & CHARITY (WAKALAH) -->
-    <div id="zakatModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-stone-200 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-[#4A3B32]">Zakat & Charity Payment</h3>
-                <button onclick="closeModal('zakatModal')" class="text-stone-400 text-lg font-bold">✕</button>
-            </div>
-            <div class="bg-rose-50 p-4 rounded-2xl border border-rose-200 text-xs space-y-1">
-                <p class="font-bold text-rose-900">Shariah Contract: Wakalah Agency</p>
-                <p class="text-stone-600">JOURNEY+ acts as Wakil to transfer 100% zakat funds directly to official state Lembaga Zakat.</p>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-stone-500 mb-1">Select Zakat Type</label>
-                <select class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-xs text-stone-800">
-                    <option>Zakat Pendapatan (Income)</option>
-                    <option>Zakat Simpanan (Savings)</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-stone-500 mb-1">Calculated Zakat Due (RM)</label>
-                <input type="number" value="311.25" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 font-bold text-xs text-stone-800" readonly>
-            </div>
-            <button onclick="closeModal('zakatModal')" class="w-full bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm hover:bg-emerald-800">Pay Zakat to Lembaga Zakat</button>
-        </div>
-    </div>
-
-    <!-- MODAL: JOURNEY SOLAT -->
-    <div id="solatModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-stone-200 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-[#4A3B32]">JourneySolat & AR Qiblah</h3>
-                <button onclick="closeModal('solatModal')" class="text-stone-400 text-lg font-bold">✕</button>
-            </div>
-            <div class="bg-emerald-800 text-white p-4 rounded-2xl text-center space-y-2">
-                <i data-lucide="compass" class="w-10 h-10 mx-auto text-amber-300 animate-pulse"></i>
-                <h4 class="font-extrabold text-base">AR Qiblah Direction: 292.4° NW</h4>
-                <p class="text-xs text-emerald-200">GPS Location: Cyberjaya, Selangor</p>
-            </div>
-            <div class="space-y-2 text-xs font-semibold text-stone-700">
-                <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Fajr</span><span>05:54 AM</span></div>
-                <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Dhuhr</span><span>01:12 PM</span></div>
-                <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Asr</span><span>04:30 PM</span></div>
-                <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Maghrib</span><span>07:15 PM</span></div>
-                <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Isha</span><span>08:26 PM</span></div>
-            </div>
-            <button onclick="closeModal('solatModal')" class="w-full brand-copper-btn py-3 rounded-xl font-bold text-sm">Enable Traveler Jam' & Qasr Mode</button>
-        </div>
-    </div>
-
-    <!-- MODAL: ITINERARY -->
-    <div id="itineraryModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-stone-200 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-[#4A3B32]">Smart Travel Itinerary</h3>
-                <button onclick="closeModal('itineraryModal')" class="text-stone-400 text-lg font-bold">✕</button>
-            </div>
-            <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-200 text-xs space-y-1">
-                <p class="font-bold text-indigo-900">Halal Food & Route Optimizer</p>
-                <p class="text-stone-600">Curates attractions, halal-certified dining options, and ticket price comparisons.</p>
-            </div>
-            <div class="space-y-2 text-xs">
-                <div class="p-3 bg-stone-50 rounded-xl border border-stone-200">
-                    <p class="font-bold">Tokyo Skytree • 10:00 AM</p>
-                    <p class="text-stone-500">Ticket: ¥2,700 (Entrance Price Tracked)</p>
-                </div>
-                <div class="p-3 bg-stone-50 rounded-xl border border-stone-200">
-                    <p class="font-bold">Ayam-YA Halal Ramen • 01:30 PM</p>
-                    <p class="text-emerald-700 font-bold">✓ Halal Certified</p>
-                </div>
-            </div>
-            <button onclick="closeModal('itineraryModal')" class="w-full brand-copper-btn py-3 rounded-xl font-bold text-sm">View Full Route Map</button>
-        </div>
-    </div>
-
-    <!-- MODAL: SPENDING TRACKER -->
-    <div id="trackerModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-stone-200 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-[#4A3B32]">Spending Tracker</h3>
-                <button onclick="closeModal('trackerModal')" class="text-stone-400 text-lg font-bold">✕</button>
-            </div>
-            <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-xs space-y-1">
-                <p class="font-bold text-amber-900">Monthly & Trip Budget Monitoring</p>
-                <p class="text-stone-600">Instills spending discipline with category thresholds and automated alerts.</p>
-            </div>
-            <div class="space-y-2 text-xs">
-                <div class="flex justify-between font-bold"><span>Total Spent (Tokyo Trip):</span><span>RM 3,200 / RM 5,000</span></div>
-                <div class="w-full bg-stone-200 rounded-full h-2 overflow-hidden">
-                    <div class="bg-[#8C533E] h-2 w-[64%]"></div>
-                </div>
-            </div>
-            <button onclick="closeModal('trackerModal')" class="w-full brand-copper-btn py-3 rounded-xl font-bold text-sm">Download Expense Report</button>
-        </div>
-    </div>
-
-    <!-- JavaScript Core -->
+    <!-- JavaScript Engine -->
     <script>
         lucide.createIcons();
 
+        // Single Page App View Switcher
+        function showPage(pageId) {
+            document.querySelectorAll('.page-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function scrollToSection(id) {
+            showPage('home');
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        // Live Foreign Exchange Engine
         let currentRate = 0;
         const sendInput = document.getElementById('send-amount');
         const targetSelect = document.getElementById('target-currency');
@@ -671,9 +809,15 @@
             const total = sendVal * currentRate;
 
             liveRateDisplay.innerText = `1 MYR = ${currentRate.toFixed(4)} ${target}`;
-            receiveDisplay.innerText = `${target === 'JPY' ? total.toFixed(0) : total.toFixed(2)} ${target}`;
+            receiveDisplay.innerText = `${['JPY', 'KRW', 'IDR', 'THB'].includes(target) ? total.toFixed(0) : total.toFixed(2)} ${target}`;
         }
 
+        sendInput.addEventListener('input', recalculate);
+        targetSelect.addEventListener('change', fetchLiveFX);
+        fetchLiveFX();
+        setInterval(fetchLiveFX, 60000);
+
+        // Split Bill Engine Logic
         async function calculateSplit() {
             const total = parseFloat(document.getElementById('split-total').value) || 0;
             const currency = document.getElementById('split-currency').value;
@@ -696,20 +840,42 @@
             }
         }
 
-        function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-            if (id === 'splitModal') calculateSplit();
+        function setSplitMode(mode) {
+            const btnEqual = document.getElementById('btn-split-equal');
+            const btnCustom = document.getElementById('btn-split-custom');
+            if (mode === 'equal') {
+                btnEqual.className = "flex-1 py-2 rounded-xl text-xs font-extrabold bg-white shadow-sm text-[#8C533E]";
+                btnCustom.className = "flex-1 py-2 rounded-xl text-xs font-extrabold text-stone-500 hover:text-stone-800";
+            } else {
+                btnCustom.className = "flex-1 py-2 rounded-xl text-xs font-extrabold bg-white shadow-sm text-[#8C533E]";
+                btnEqual.className = "flex-1 py-2 rounded-xl text-xs font-extrabold text-stone-500 hover:text-stone-800";
+            }
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-
-        sendInput.addEventListener('input', recalculate);
-        targetSelect.addEventListener('change', fetchLiveFX);
-
-        fetchLiveFX();
-        setInterval(fetchLiveFX, 60000);
+        // Initialize Spending Pie Chart
+        window.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('spendingPieChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Food & Dining', 'Accommodation', 'Transport', 'Shopping', 'Tickets'],
+                        datasets: [{
+                            data: [850, 700, 450, 300, 200],
+                            backgroundColor: ['#C68B59', '#8C533E', '#00D2FF', '#B59CFF', '#FF8A9A'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Plus Jakarta Sans', size: 11 } } }
+                        },
+                        cutout: '65%'
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
