@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#FAF4F0] text-slate-800">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOURNEY+ | Malaysia Multi-Currency Cross-Border E-Wallet</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            cream: {
+              50: '#FDFBF7',
+              100: '#FAF4F0',
+              200: '#F3E8E2',
+              300: '#E8D5CB',
+            },
+            bronze: {
+              400: '#D4A373',
+              500: '#C68B59',
+              600: '#B87333',
+              700: '#8C533E',
+              800: '#643828',
+              900: '#3D2016'
+            },
+            pastel: {
+              lime: '#88D644',
+              cyan: '#46C5EA',
+              purple: '#AB7EE0',
+              rose: '#FF6F91',
+              yellow: '#FFD166'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbars & glassmorphism on warm beige */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F3E8E2;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C68B59;
+      border-radius: 9999px;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(198, 139, 89, 0.2);
+    }
+    .glass-card-bronze {
+      background: linear-gradient(135deg, rgba(243, 232, 226, 0.9), rgba(255, 255, 255, 0.95));
+      border: 1px solid rgba(140, 83, 62, 0.25);
+    }
+    .card-hover-effect {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover-effect:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px -10px rgba(140, 83, 62, 0.18);
+      border-color: rgba(184, 115, 51, 0.5);
+    }
+    .bronze-gradient-text {
+      background: linear-gradient(135deg, #8C533E 0%, #C68B59 50%, #B87333 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .metallic-bronze-bg {
+      background: linear-gradient(135deg, #B87333 0%, #C68B59 40%, #8C533E 100%);
+    }
+    .compass-spin {
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .compass-spin:hover {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body class="h-full font-sans antialiased bg-[#FAF4F0] text-slate-800 selection:bg-bronze-500 selection:text-white">
+
+  <div class="min-h-full flex flex-col lg:flex-row">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-full lg:w-72 bg-[#F3E8E2]/90 border-b lg:border-b-0 lg:border-r border-bronze-400/20 flex flex-col justify-between shrink-0 z-30">
+      <div>
+        <!-- Logo Header derived from the Compass & Pastel J+ Brand -->
+        <div class="p-6 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <!-- Compass Badge Emblem -->
+            <div class="w-11 h-11 rounded-2xl metallic-bronze-bg p-0.5 flex items-center justify-center shadow-md shadow-bronze-600/20 cursor-pointer compass-spin">
+              <div class="w-full h-full bg-[#FAF4F0] rounded-[14px] flex items-center justify-center relative">
+                <i data-lucide="compass" class="w-6 h-6 text-bronze-700"></i>
+                <span class="absolute text-[9px] font-extrabold text-bronze-800 font-mono">J+</span>
+              </div>
+            </div>
+            
+            <!-- Colorful Brand Name -->
+            <div>
+              <div class="flex items-center font-extrabold text-2xl tracking-tight">
+                <span class="text-pastel-lime">J</span>
+                <span class="text-pastel-cyan">O</span>
+                <span class="text-pastel-purple">U</span>
+                <span class="text-pastel-rose">R</span>
+                <span class="text-pastel-yellow">N</span>
+                <span class="text-pastel-cyan">E</span>
+                <span class="text-pastel-purple">Y</span>
+                <span class="text-pastel-rose font-black ml-0.5">+</span>
+              </div>
+              <p class="text-[9px] text-bronze-700 font-bold tracking-widest uppercase">MALAYSIA CROSS-BORDER</p>
+            </div>
+          </div>
+
+          <!-- Mobile Toggle Button -->
+          <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-xl text-bronze-700 hover:bg-bronze-500/10">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav id="navMenu" class="hidden lg:block px-4 space-y-1.5 mt-2">
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all metallic-bronze-bg text-white shadow-md shadow-bronze-600/20">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+            Dashboard & RM Vault
+          </button>
+          <button onclick="switchTab('fx')" id="nav-fx" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 hover:text-bronze-800 hover:bg-bronze-500/10 transition-all">
+            <i data-lucide="arrow-left-right" class="w-5 h-5 text-pastel-cyan"></i>
+            FX Instant Swap & Lock
+          </button>
+          <button onclick="switchTab('transfers')" id="nav-transfers" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 hover:text-bronze-800 hover:bg-bronze-500/10 transition-all">
+            <i data-lucide="send" class="w-5 h-5 text-pastel-lime"></i>
+            DuitNow & Overseas Wire
+          </button>
+          <button onclick="switchTab('cards')" id="nav-cards" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 hover:text-bronze-800 hover:bg-bronze-500/10 transition-all">
+            <i data-lucide="credit-card" class="w-5 h-5 text-pastel-purple"></i>
+            J+ Compass Travel Card
+          </button>
+          <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 hover:text-bronze-800 hover:bg-bronze-500/10 transition-all">
+            <i data-lucide="pie-chart" class="w-5 h-5 text-pastel-rose"></i>
+            Travel Spend Insights
+          </button>
+        </nav>
+      </div>
+
+      <!-- User KYC Badge (Malaysian Verified User) -->
+      <div class="p-4 border-t border-bronze-400/20 m-4 rounded-2xl glass-card">
+        <div class="flex items-center gap-3 mb-2.5">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-bronze-500">
+            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" title="MyKad eKYC Verified"></span>
+          </div>
+          <div class="overflow-hidden">
+            <h4 class="text-xs font-bold text-slate-900 truncate">Siti Aishah Binti Ahmad</h4>
+            <p class="text-[10px] text-bronze-700 font-semibold truncate">MyKad Verified • Tier 3</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] bg-[#F3E8E2] p-2 rounded-xl border border-bronze-400/20">
+          <span class="text-slate-600 flex items-center gap-1 font-medium">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i> BNM Compliant
+          </span>
+          <span class="font-mono text-bronze-800 font-bold">RM 50,000/mo</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW AREA -->
+    <main class="flex-1 flex flex-col min-w-0 bg-[#FAF4F0] overflow-y-auto">
+      
+      <!-- TOP NAVIGATION BAR -->
+      <header class="h-16 border-b border-bronze-400/20 px-6 flex items-center justify-between sticky top-0 bg-[#FAF4F0]/90 backdrop-blur-md z-20">
+        <div class="flex items-center gap-4 flex-1 max-w-md">
+          <div class="relative w-full">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" placeholder="Search transactions, DuitNow IDs, currencies..." class="w-full bg-white/80 border border-bronze-400/30 rounded-xl pl-9 pr-4 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-bronze-500 shadow-sm transition">
+          </div>
+        </div>
+
+        <!-- Top Right Actions -->
+        <div class="flex items-center gap-3">
+          <!-- Live Rate Ticker -->
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-bronze-400/30 text-xs shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-mono text-slate-500">MYR ➔ SGD</span>
+            <span class="font-mono font-bold text-bronze-800" id="liveTickerSGD">0.3015</span>
+            <span class="text-emerald-600 text-[10px] font-bold">+0.12%</span>
+          </div>
+
+          <!-- Base Currency Indicator -->
+          <div class="flex items-center gap-2 bg-white border border-bronze-400/30 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 shadow-sm">
+            <span class="text-base">🇲🇾</span>
+            <span>MYR (Ringgit)</span>
+          </div>
+
+          <!-- DuitNow Quick Action -->
+          <button onclick="openModal('duitNowModal')" class="p-2 rounded-xl bg-white border border-bronze-400/30 hover:bg-bronze-500/10 text-bronze-800 font-bold text-xs flex items-center gap-1 shadow-sm">
+            <i data-lucide="qr-code" class="w-4 h-4 text-pastel-rose"></i>
+            <span class="hidden md:inline">DuitNow QR</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB CONTENT CONTAINER -->
+      <div class="p-4 md:p-8 space-y-8 flex-1">
+        
+        <!-- ========================================================= -->
+        <!-- TAB 1: DASHBOARD & RM MULTI-CURRENCY VAULT -->
+        <!-- ========================================================= -->
+        <div id="tab-dashboard" class="tab-pane space-y-8">
+          
+          <!-- Consolidated Net Balance Card in RM -->
+          <div class="relative overflow-hidden rounded-3xl metallic-bronze-bg p-6 md:p-8 shadow-xl text-white">
+            <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute right-1/4 -top-12 w-48 h-48 bg-pastel-yellow/20 rounded-full blur-xl pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+              <div>
+                <div class="flex items-center gap-2 text-xs font-bold text-cream-100 tracking-wider uppercase mb-1">
+                  <i data-lucide="compass" class="w-4 h-4 text-pastel-yellow"></i> Total Consolidated Vault Balance
+                </div>
+                <div class="flex items-baseline gap-3">
+                  <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight font-mono" id="totalBalanceRM">RM 24,850.50</h1>
+                  <span class="text-xs px-2.5 py-1 rounded-full bg-white/20 text-white border border-white/30 font-semibold flex items-center gap-1">
+                    <i data-lucide="trending-up" class="w-3 h-3 text-pastel-lime"></i> +RM 640.20 FX Saved
+                  </span>
+                </div>
+                <p class="text-xs text-cream-100 mt-2 font-medium">Primary Account: <span class="text-white font-bold">Ringgit Malaysia (MYR)</span> • Linked Clearing: <span class="text-white font-bold">DuitNow, FPX, PayNet</span></p>
+              </div>
+
+              <!-- Quick Action Buttons -->
+              <div class="flex flex-wrap items-center gap-3">
+                <button onclick="openModal('topUpModal')" class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-bronze-800 font-bold text-xs px-5 py-3.5 rounded-2xl shadow-md hover:bg-cream-100 transition">
+                  <i data-lucide="plus-circle" class="w-4 h-4 text-pastel-rose"></i> Top Up via FPX
+                </button>
+                <button onclick="switchTab('fx')" class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-bronze-800/80 hover:bg-bronze-900 text-white font-bold text-xs px-5 py-3.5 rounded-2xl border border-white/20 transition">
+                  <i data-lucide="repeat" class="w-4 h-4 text-pastel-cyan"></i> Swap FX
+                </button>
+                <button onclick="switchTab('transfers')" class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-bronze-800/80 hover:bg-bronze-900 text-white font-bold text-xs px-5 py-3.5 rounded-2xl border border-white/20 transition">
+                  <i data-lucide="send" class="w-4 h-4 text-pastel-lime"></i> Send DuitNow / Global
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Multi-Currency Buckets -->
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <i data-lucide="wallet" class="w-5 h-5 text-bronze-600"></i> Multi-Currency Travel Vaults
+                </h3>
+                <p class="text-xs text-slate-500">Hold foreign currencies directly to lock zero-markup exchange rates</p>
+              </div>
+              <button onclick="openModal('addCurrencyModal')" class="text-xs font-bold text-bronze-700 hover:text-bronze-900 flex items-center gap-1">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Open New Currency Bucket
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="walletGrid">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Bottom Section: Transactions & Active J+ Compass Card -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Recent Transactions List -->
+            <div class="lg:col-span-2 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-md font-bold text-slate-900 flex items-center gap-2">
+                  <i data-lucide="history" class="w-4 h-4 text-bronze-600"></i> Recent Activity (Malaysia & Global)
+                </h3>
+                <button onclick="switchTab('analytics')" class="text-xs font-bold text-bronze-700 hover:underline">View Full Ledger</button>
+              </div>
+
+              <div class="glass-card rounded-2xl border border-bronze-400/20 overflow-hidden shadow-sm">
+                <div class="divide-y divide-bronze-400/10" id="dashboardTxList">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- J+ Compass Rose Metal Card -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-md font-bold text-slate-900 flex items-center gap-2">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> Active Physical J+ Card
+                </h3>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold border border-emerald-300">ACTIVE</span>
+              </div>
+
+              <!-- Rose Bronze Compass Card Graphic -->
+              <div class="relative h-52 rounded-3xl metallic-bronze-bg p-6 text-white shadow-xl overflow-hidden flex flex-col justify-between">
+                <div class="absolute -right-8 -bottom-8 w-40 h-40 border-4 border-white/10 rounded-full flex items-center justify-center pointer-events-none">
+                  <i data-lucide="compass" class="w-28 h-28 text-white/10"></i>
+                </div>
+                
+                <div class="flex items-center justify-between z-10">
+                  <div class="flex items-center gap-2">
+                    <span class="font-extrabold text-sm tracking-widest text-white">JOURNEY</span>
+                    <span class="text-xs font-black text-pastel-yellow">+</span>
+                  </div>
+                  <i data-lucide="wifi" class="w-5 h-5 text-white/70 rotate-90"></i>
+                </div>
+
+                <div class="z-10 font-mono text-lg font-bold tracking-widest text-cream-100 my-2">
+                  5412 •••• •••• 9901
+                </div>
+
+                <div class="flex items-end justify-between z-10 text-xs">
+                  <div>
+                    <p class="text-[8px] uppercase tracking-wider text-cream-100">CARDHOLDER</p>
+                    <p class="font-bold">SITI AISHAH</p>
+                  </div>
+                  <div>
+                    <p class="text-[8px] uppercase tracking-wider text-cream-100">EXPIRES</p>
+                    <p class="font-mono font-bold">11/29</p>
+                  </div>
+                  <div class="font-extrabold italic text-base">Mastercard</div>
+                </div>
+              </div>
+
+              <!-- Quick Security Toggles -->
+              <div class="glass-card rounded-2xl p-4 space-y-3 shadow-sm">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-700 font-bold flex items-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4 text-bronze-700"></i> Freeze Card Instantly
+                  </span>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="freezeCardToggle" class="sr-only peer" onchange="toggleCardFreeze(this)">
+                    <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-bronze-600"></div>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between text-xs border-t border-bronze-400/20 pt-3">
+                  <span class="text-slate-700 font-bold flex items-center gap-2">
+                    <i data-lucide="globe" class="w-4 h-4 text-bronze-700"></i> Auto MYR Currency Fallback
+                  </span>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" checked class="sr-only peer">
+                    <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- TAB 2: LIVE FX INSTANT SWAP (MYR PRIMARY) -->
+        <!-- ========================================================= -->
+        <div id="tab-fx" class="tab-pane hidden space-y-8">
+          <div class="max-w-4xl mx-auto space-y-6">
+            <div>
+              <h2 class="text-2xl font-extrabold text-slate-900">Foreign Exchange & Zero-Markup Swap</h2>
+              <p class="text-xs text-slate-500">Lock guaranteed mid-market rates straight from Ringgit Malaysia (MYR) with 0% hidden fees</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <!-- FX Form -->
+              <div class="lg:col-span-7 glass-card p-6 rounded-3xl space-y-6 border border-bronze-400/20 shadow-md">
+                
+                <!-- 60s Lock Timer -->
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-cream-200/60 border border-bronze-400/20 text-xs">
+                  <div class="flex items-center gap-2 text-bronze-800 font-bold">
+                    <i data-lucide="clock" class="w-4 h-4 animate-spin text-pastel-rose"></i>
+                    <span>Mid-Market FX Rate Locked:</span>
+                  </div>
+                  <span class="font-mono font-bold text-bronze-900 bg-white px-2.5 py-1 rounded-xl shadow-sm" id="fxLockTimer">00:59</span>
+                </div>
+
+                <!-- You Pay (MYR) -->
+                <div class="space-y-2">
+                  <label class="text-xs font-bold text-slate-600">You Convert From</label>
+                  <div class="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-bronze-400/30 shadow-sm focus-within:border-bronze-500">
+                    <input type="number" id="fxFromAmount" value="1000" oninput="calculateFX()" class="w-full bg-transparent text-xl font-bold font-mono text-slate-900 focus:outline-none">
+                    <select id="fxFromCurrency" onchange="calculateFX()" class="bg-[#F3E8E2] border border-bronze-400/30 text-slate-800 font-bold text-xs rounded-xl px-3 py-2 focus:outline-none">
+                      <option value="MYR" selected>🇲🇾 MYR</option>
+                      <option value="SGD">🇸🇬 SGD</option>
+                      <option value="USD">🇺🇸 USD</option>
+                      <option value="EUR">🇪🇺 EUR</option>
+                    </select>
+                  </div>
+                  <p class="text-[11px] text-slate-500 text-right">Available in Vault: <span id="fxFromAvailable" class="font-bold text-slate-800">RM 12,850.50 MYR</span></p>
+                </div>
+
+                <!-- Swap Button -->
+                <div class="flex justify-center -my-2 relative z-10">
+                  <button onclick="swapFXCurrencies()" class="w-10 h-10 rounded-full metallic-bronze-bg text-white flex items-center justify-center shadow-lg hover:scale-105 transition">
+                    <i data-lucide="arrow-down-up" class="w-5 h-5"></i>
+                  </button>
+                </div>
+
+                <!-- You Receive -->
+                <div class="space-y-2">
+                  <label class="text-xs font-bold text-slate-600">You Receive In Vault</label>
+                  <div class="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-bronze-400/30 shadow-sm focus-within:border-bronze-500">
+                    <input type="number" id="fxToAmount" readonly class="w-full bg-transparent text-xl font-bold font-mono text-bronze-800 focus:outline-none">
+                    <select id="fxToCurrency" onchange="calculateFX()" class="bg-[#F3E8E2] border border-bronze-400/30 text-slate-800 font-bold text-xs rounded-xl px-3 py-2 focus:outline-none">
+                      <option value="SGD" selected>🇸🇬 SGD</option>
+                      <option value="JPY">🇯🇵 JPY</option>
+                      <option value="THB">🇹🇭 THB</option>
+                      <option value="USD">🇺🇸 USD</option>
+                      <option value="EUR">🇪🇺 EUR</option>
+                      <option value="IDR">🇮🇩 IDR</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Transparency Breakdown -->
+                <div class="space-y-2 bg-white/60 p-4 rounded-2xl border border-bronze-400/20 text-xs shadow-sm">
+                  <div class="flex justify-between text-slate-600">
+                    <span>Guaranteed Rate:</span>
+                    <span class="font-mono font-bold text-slate-800" id="fxGuaranteedRate">1 MYR = 0.3015 SGD</span>
+                  </div>
+                  <div class="flex justify-between text-slate-600">
+                    <span>J+ Transparency Fee (0% Markup):</span>
+                    <span class="font-mono text-emerald-600 font-bold" id="fxFeeAmount">RM 0.00 FREE</span>
+                  </div>
+                  <div class="flex justify-between text-slate-600">
+                    <span>Settlement Speed:</span>
+                    <span class="text-slate-800 font-bold flex items-center gap-1">
+                      <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i> Instant (Local Ledger)
+                    </span>
+                  </div>
+                </div>
+
+                <button onclick="executeFXConversion()" class="w-full metallic-bronze-bg hover:opacity-95 text-white font-bold py-4 rounded-2xl shadow-lg shadow-bronze-600/30 transition flex items-center justify-center gap-2 text-sm">
+                  <i data-lucide="check-circle" class="w-5 h-5 text-pastel-yellow"></i> Authorize & Convert Instantly
+                </button>
+              </div>
+
+              <!-- Live FX Rate Matrix -->
+              <div class="lg:col-span-5 space-y-4">
+                <div class="glass-card p-5 rounded-3xl border border-bronze-400/20 shadow-sm space-y-4">
+                  <h4 class="text-xs font-extrabold text-slate-700 tracking-wider uppercase flex items-center justify-between">
+                    <span>Malaysian Ringgit (MYR) Rates</span>
+                    <span class="text-[10px] text-emerald-600 flex items-center gap-1 font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
+                    </span>
+                  </h4>
+                  <div class="space-y-2.5 font-mono text-xs" id="fxRateMatrix">
+                    <!-- Populated via JS -->
+                  </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl border border-bronze-400/20 shadow-sm space-y-3">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-bold text-slate-800">MYR ➔ SGD 7-Day Trend</span>
+                    <span class="text-bronze-700 font-mono font-bold">+0.4%</span>
+                  </div>
+                  <div class="h-36">
+                    <canvas id="fxTrendChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- TAB 3: DUITNOW & OVERSEAS REMITTANCE -->
+        <!-- ========================================================= -->
+        <div id="tab-transfers" class="tab-pane hidden space-y-8">
+          <div class="max-w-4xl mx-auto space-y-6">
+            <div>
+              <h2 class="text-2xl font-extrabold text-slate-900">DuitNow & Cross-Border Remittance</h2>
+              <p class="text-xs text-slate-500">Send money locally via DuitNow/FPX or directly to bank accounts in Singapore, Thailand, UK, and EU</p>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl border border-bronze-400/20 shadow-md space-y-6">
+              <!-- Mode Tabs -->
+              <div class="grid grid-cols-2 gap-3 p-1 bg-[#F3E8E2] rounded-2xl border border-bronze-400/20">
+                <button onclick="setTransferType('duitnow')" id="btn-transfer-duitnow" class="py-2.5 text-xs font-bold rounded-xl transition metallic-bronze-bg text-white shadow-sm">
+                  DuitNow Transfer (Malaysia)
+                </button>
+                <button onclick="setTransferType('bank')" id="btn-transfer-bank" class="py-2.5 text-xs font-bold rounded-xl text-slate-600 transition hover:text-slate-900">
+                  Overseas Bank Rail (FAST / PromptPay / Wise)
+                </button>
+              </div>
+
+              <!-- Remittance Input Form -->
+              <div class="space-y-4">
+                <div>
+                  <label class="text-xs font-bold text-slate-700 mb-1 block">Recipient Name / Account Identifier</label>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" id="remitRecipientName" placeholder="Recipient Full Name (as per MyKad/Passport)" class="bg-white border border-bronze-400/30 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-bronze-500 shadow-sm">
+                    <input type="text" id="remitAccountDetail" placeholder="DuitNow ID (IC/Mobile) or Overseas IBAN" class="bg-white border border-bronze-400/30 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-bronze-500 shadow-sm">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <!-- Send Amount -->
+                  <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700">Sending Amount (From MYR Vault)</label>
+                    <div class="flex items-center gap-2 bg-white p-3 rounded-xl border border-bronze-400/30 shadow-sm">
+                      <input type="number" id="remitSendAmount" value="300" oninput="updateRemitEstimate()" class="w-full bg-transparent text-lg font-bold font-mono text-slate-900 focus:outline-none">
+                      <span class="text-xs font-bold text-bronze-800">MYR (RM)</span>
+                    </div>
+                  </div>
+
+                  <!-- Destination Rail -->
+                  <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700">Destination Network</label>
+                    <select id="remitTargetCurrency" onchange="updateRemitEstimate()" class="w-full bg-white border border-bronze-400/30 text-slate-800 text-xs font-bold rounded-xl p-3 focus:outline-none shadow-sm">
+                      <option value="MYR">🇲🇾 Malaysia (DuitNow Instant Transfer)</option>
+                      <option value="SGD">🇸🇬 Singapore (FAST Bank Network)</option>
+                      <option value="THB">🇹🇭 Thailand (PromptPay QR / Bank)</option>
+                      <option value="EUR">🇪🇺 Europe (SEPA Instant Wire)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Estimate Rail Card -->
+                <div id="remitRailCard" class="p-4 rounded-2xl bg-white border border-bronze-400/20 space-y-2 text-xs shadow-sm">
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Selected Clearing Rail:</span>
+                    <span class="font-mono font-bold text-bronze-800 flex items-center gap-1" id="remitRailName">
+                      <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i> DuitNow National Instant Rail
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Estimated Arrival:</span>
+                    <span class="font-mono text-emerald-600 font-bold" id="remitArrivalEstimate">Instant (&lt; 5 seconds)</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Processing Fee:</span>
+                    <span class="font-mono text-emerald-600 font-bold" id="remitFee">RM 0.00 FREE</span>
+                  </div>
+                  <div class="flex items-center justify-between border-t border-slate-100 pt-2 font-bold">
+                    <span class="text-slate-800">Recipient Receives:</span>
+                    <span class="font-mono text-bronze-800 text-sm" id="remitCalculatedTotal">RM 300.00 MYR</span>
+                  </div>
+                </div>
+
+                <button onclick="executeRemittance()" class="w-full metallic-bronze-bg hover:opacity-95 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-bronze-600/20 transition flex items-center justify-center gap-2 text-xs">
+                  <i data-lucide="send" class="w-4 h-4 text-pastel-yellow"></i> Authorize Payment & Send
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- TAB 4: J+ COMPASS TRAVEL CARD MANAGER -->
+        <!-- ========================================================= -->
+        <div id="tab-cards" class="tab-pane hidden space-y-8">
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-900">J+ Compass Travel Card Management</h2>
+            <p class="text-xs text-slate-500">Control your physical metallic rose-bronze card and instant virtual disposable cards</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Cards Carousel Selection -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Your Active Cards</span>
+                <button onclick="alert('Virtual Card issued instantly! Bound to your MYR Vault.')" class="text-xs font-bold text-bronze-700 hover:underline flex items-center gap-1">
+                  <i data-lucide="plus" class="w-3 h-3"></i> Issue Virtual Card
+                </button>
+              </div>
+
+              <!-- Card Item 1 (Physical Metal Rose Bronze) -->
+              <div class="p-5 rounded-3xl metallic-bronze-bg text-white shadow-xl space-y-4 cursor-pointer relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-white/20 border border-white/30 text-white">PHYSICAL ROSE-BRONZE</span>
+                  <span class="text-xs font-mono font-bold">MASTERCARD</span>
+                </div>
+                <div class="font-mono text-base font-bold tracking-widest text-cream-100">
+                  5412 •••• •••• 9901
+                </div>
+                <div class="flex justify-between items-end text-xs">
+                  <div>
+                    <p class="text-[8px] text-cream-100 uppercase">Primary Rail</p>
+                    <p class="font-bold text-white">Ringgit Vault (MYR)</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-[8px] text-cream-100 uppercase">Monthly Limit</p>
+                    <p class="font-mono font-bold text-white">RM 15,000</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card Item 2 (Virtual Disposable) -->
+              <div class="p-5 rounded-3xl bg-white border border-bronze-400/30 shadow-sm space-y-4 cursor-pointer hover:border-bronze-500 transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-pastel-cyan/20 text-slate-800 border border-pastel-cyan">VIRTUAL DISPOSABLE</span>
+                  <span class="text-xs font-mono font-bold text-slate-400">VISA</span>
+                </div>
+                <div class="font-mono text-base font-bold tracking-widest text-slate-700">
+                  4111 •••• •••• 4019
+                </div>
+                <div class="flex justify-between items-end text-xs">
+                  <div>
+                    <p class="text-[8px] text-slate-400 uppercase">Purpose</p>
+                    <p class="font-bold text-slate-800">Agoda & Travel Stays</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-[8px] text-slate-400 uppercase">Status</p>
+                    <p class="font-mono font-bold text-emerald-600">Active</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Controls -->
+            <div class="lg:col-span-2 glass-card p-6 rounded-3xl border border-bronze-400/20 shadow-md space-y-6">
+              <h3 class="text-md font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="sliders" class="w-5 h-5 text-bronze-700"></i> Card Security & Overseas Spending Controls
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-2xl bg-white border border-bronze-400/20 space-y-4 shadow-sm">
+                  <h4 class="text-xs font-extrabold text-slate-700 uppercase">Payment Channels</h4>
+                  
+                  <div class="flex items-center justify-between text-xs">
+                    <div>
+                      <p class="font-bold text-slate-800">Contactless (PayWave / Apple Pay)</p>
+                      <p class="text-[10px] text-slate-500">Tap-to-pay in Malaysia & abroad</p>
+                    </div>
+                    <input type="checkbox" checked class="w-4 h-4 accent-bronze-600">
+                  </div>
+
+                  <div class="flex items-center justify-between text-xs border-t border-slate-100 pt-3">
+                    <div>
+                      <p class="font-bold text-slate-800">Overseas ATM Cash Withdrawal</p>
+                      <p class="text-[10px] text-slate-500">Zero foreign fee cash out</p>
+                    </div>
+                    <input type="checkbox" checked class="w-4 h-4 accent-bronze-600">
+                  </div>
+
+                  <div class="flex items-center justify-between text-xs border-t border-slate-100 pt-3">
+                    <div>
+                      <p class="font-bold text-slate-800">Online E-Commerce Transactions</p>
+                      <p class="text-[10px] text-slate-500">Grab, Shopee, Airlines, Booking</p>
+                    </div>
+                    <input type="checkbox" checked class="w-4 h-4 accent-bronze-600">
+                  </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-white border border-bronze-400/20 space-y-4 shadow-sm">
+                  <h4 class="text-xs font-extrabold text-slate-700 uppercase">Smart Currency Routing</h4>
+
+                  <div class="space-y-1.5 text-xs">
+                    <div class="flex justify-between font-bold">
+                      <span class="text-slate-700">Auto FX Convert Strategy</span>
+                      <span class="text-emerald-600 font-mono">ACTIVE</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500">When paying overseas, J+ automatically deducts from local currency vault first (e.g. JPY in Japan). If empty, auto-swaps from MYR Ringgit vault at 0% markup.</p>
+                  </div>
+
+                  <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-700">Daily Spending Limit</span>
+                    <span class="font-mono text-xs font-bold text-bronze-800">RM 5,000.00</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-3 pt-2">
+                <button onclick="alert('Card Details: 5412 8842 9901 9901 | EXP: 11/29 | CVV: 842')" class="px-4 py-2.5 bg-white border border-bronze-400/30 rounded-xl text-xs font-bold text-slate-800 flex items-center gap-2 hover:bg-cream-100 shadow-sm transition">
+                  <i data-lucide="eye" class="w-4 h-4 text-pastel-cyan"></i> Reveal Card Details & CVV
+                </button>
+                <button onclick="alert('PIN Reset SMS sent to your registered Malaysian mobile (+6012-***8892)')" class="px-4 py-2.5 bg-white border border-bronze-400/30 rounded-xl text-xs font-bold text-slate-800 flex items-center gap-2 hover:bg-cream-100 shadow-sm transition">
+                  <i data-lucide="key" class="w-4 h-4 text-pastel-rose"></i> Reset ATM PIN
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- TAB 5: TRAVEL SPEND ANALYTICS & LEDGER -->
+        <!-- ========================================================= -->
+        <div id="tab-analytics" class="tab-pane hidden space-y-8">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold text-slate-900">Travel Analytics & Ledger Statement</h2>
+              <p class="text-xs text-slate-500">Categorized expenses and downloadable Bank Negara Malaysia (BNM) aligned statements</p>
+            </div>
+            <button onclick="downloadStatementCSV()" class="px-4 py-2.5 rounded-xl bg-white border border-bronze-400/30 text-xs font-bold text-bronze-800 flex items-center gap-2 shadow-sm hover:bg-cream-100 transition">
+              <i data-lucide="download" class="w-4 h-4"></i> Export Tax Statement (CSV)
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Doughnut Chart -->
+            <div class="glass-card p-6 rounded-3xl border border-bronze-400/20 shadow-md space-y-4">
+              <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Expense Breakdown by Category</h4>
+              <div class="h-60 flex items-center justify-center">
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Ledger Table -->
+            <div class="lg:col-span-2 glass-card p-6 rounded-3xl border border-bronze-400/20 shadow-md space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Immutable Double-Entry Ledger</h4>
+                <select id="ledgerFilterType" onchange="renderMasterLedger()" class="bg-white border border-bronze-400/30 text-slate-800 text-xs rounded-xl px-3 py-1.5 focus:outline-none shadow-sm font-semibold">
+                  <option value="ALL">All Transactions</option>
+                  <option value="TOPUP">DuitNow / FPX Top-Up</option>
+                  <option value="FX">FX Swaps</option>
+                  <option value="CARD">Overseas Card Spend</option>
+                </select>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                  <thead class="bg-[#F3E8E2] text-bronze-800 font-mono uppercase text-[10px]">
+                    <tr>
+                      <th class="p-3 rounded-l-xl">Date/Time</th>
+                      <th class="p-3">Description</th>
+                      <th class="p-3">Clearing Rail</th>
+                      <th class="p-3">Amount</th>
+                      <th class="p-3 rounded-r-xl text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="masterLedgerBody" class="divide-y divide-bronze-400/10 font-mono">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 1: FPX & DUITNOW TOP-UP -->
+  <!-- ========================================================= -->
+  <div id="topUpModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-bronze-400/30 space-y-6 relative shadow-2xl">
+      <button onclick="closeModal('topUpModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-800">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="space-y-1">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-bronze-600"></i> FPX / DuitNow Reload
+        </h3>
+        <p class="text-xs text-slate-500">Top up Ringgit Malaysia (MYR) vault via local online banking</p>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="text-slate-700 font-bold mb-1 block">Reload Amount (MYR)</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono font-bold text-slate-500">RM</span>
+            <input type="number" id="topUpAmountInput" value="500" class="w-full bg-white border border-bronze-400/30 rounded-xl pl-10 pr-4 py-3 text-slate-900 font-mono font-bold text-lg focus:outline-none shadow-sm">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-700 font-bold mb-1 block">Select FPX Bank Rail</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="selectBank(this)" class="bank-option p-2.5 rounded-xl border border-bronze-400/40 text-center font-bold text-slate-800 bg-white hover:border-bronze-600 transition shadow-sm">Maybank2u</button>
+            <button onclick="selectBank(this)" class="bank-option p-2.5 rounded-xl border border-bronze-400/20 text-center font-bold text-slate-800 bg-white hover:border-bronze-600 transition shadow-sm">CIMB Clicks</button>
+            <button onclick="selectBank(this)" class="bank-option p-2.5 rounded-xl border border-bronze-400/20 text-center font-bold text-slate-800 bg-white hover:border-bronze-600 transition shadow-sm">Public Bank</button>
+            <button onclick="selectBank(this)" class="bank-option p-2.5 rounded-xl border border-bronze-400/20 text-center font-bold text-slate-800 bg-white hover:border-bronze-600 transition shadow-sm">RHB Now</button>
+          </div>
+        </div>
+
+        <button onclick="executeTopUp()" class="w-full metallic-bronze-bg hover:opacity-95 text-white font-bold py-3.5 rounded-xl shadow-md transition text-xs">
+          Proceed to FPX Bank Gateway
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 2: DUITNOW QR SCANNER & PAY -->
+  <!-- ========================================================= -->
+  <div id="duitNowModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="glass-card max-w-sm w-full p-6 rounded-3xl border border-bronze-400/30 space-y-5 text-center relative shadow-2xl">
+      <button onclick="closeModal('duitNowModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-800">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">DuitNow National QR</h3>
+        <p class="text-xs text-slate-500">Scan to pay merchants anywhere in Malaysia & ASEAN</p>
+      </div>
+
+      <!-- QR Box Graphic -->
+      <div class="w-48 h-48 mx-auto rounded-2xl bg-white p-3 border-2 border-bronze-500 shadow-md flex items-center justify-center relative">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=JOURNEY_PLUS_MALAYSIA_DUITNOW_DEMO" alt="DuitNow QR Code" class="w-full h-full object-contain">
+      </div>
+
+      <div class="text-xs text-slate-600 space-y-1">
+        <p class="font-bold text-slate-800">Your DuitNow ID: <span class="font-mono text-bronze-800">012-884-9901</span></p>
+        <p class="text-[10px] text-slate-400">Accepted by all Banks, Touch 'n Go, GrabPay, and ShopeePay merchants</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 3: OPEN NEW CURRENCY BUCKET -->
+  <!-- ========================================================= -->
+  <div id="addCurrencyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-bronze-400/30 space-y-6 relative shadow-2xl">
+      <button onclick="closeModal('addCurrencyModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-800">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="space-y-1">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="globe" class="w-5 h-5 text-bronze-600"></i> Open Multi-Currency Bucket
+        </h3>
+        <p class="text-xs text-slate-500">Hold local currency balances to lock zero-markup exchange rates before traveling</p>
+      </div>
+
+      <div class="space-y-2.5 text-xs">
+        <div onclick="createCurrencyBucket('KRW', 'South Korean Won', '🇰🇷', 0.0035)" class="p-3.5 rounded-2xl bg-white hover:bg-cream-100 border border-bronze-400/20 cursor-pointer flex items-center justify-between transition shadow-sm">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🇰🇷</span>
+            <div>
+              <p class="font-bold text-slate-800">KRW - South Korean Won</p>
+              <p class="text-[10px] text-slate-500">Zero FX Markup for Seoul Travel</p>
+            </div>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-bronze-700"></i>
+        </div>
+
+        <div onclick="createCurrencyBucket('TWD', 'New Taiwan Dollar', '🇹🇼', 0.145)" class="p-3.5 rounded-2xl bg-white hover:bg-cream-100 border border-bronze-400/20 cursor-pointer flex items-center justify-between transition shadow-sm">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🇹🇼</span>
+            <div>
+              <p class="font-bold text-slate-800">TWD - Taiwan Dollar</p>
+              <p class="text-[10px] text-slate-500">Taipei Street Food & Transit Ready</p>
+            </div>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-bronze-700"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APP LOGIC (MALAYSIA MYR PRIMARY) -->
+  <script>
+    // MALAYSIAN USER STATE STORE
+    const state = {
+      user: {
+        name: "Siti Aishah Binti Ahmad",
+        tier: "MyKad Tier 3",
+        baseCurrency: "MYR"
+      },
+      // MYR rates relative to 1 MYR
+      fxRatesFromMYR: {
+        MYR: 1.0,
+        SGD: 0.3015,
+        JPY: 33.50,
+        THB: 7.65,
+        USD: 0.2245,
+        EUR: 0.2070,
+        IDR: 3520.00
+      },
+      wallets: [
+        { code: "MYR", name: "Ringgit Malaysia", flag: "🇲🇾", balance: 12850.50, iban: "DuitNow: 012-884-9901", symbol: "RM" },
+        { code: "SGD", name: "Singapore Dollar", flag: "🇸🇬", balance: 1420.00, iban: "FAST: SG89 DBS0 102", symbol: "S$" },
+        { code: "JPY", name: "Japanese Yen", flag: "🇯🇵", balance: 185000, iban: "JP90 0012 4490 12", symbol: "¥" },
+        { code: "THB", name: "Thai Baht", flag: "🇹🇭", balance: 15400, iban: "PromptPay: 66890123", symbol: "฿" },
+        { code: "USD", name: "US Dollar", flag: "🇺🇸", balance: 850.00, iban: "ACH: US89 JOUR 0192", symbol: "$" },
+        { code: "EUR", name: "Euro", flag: "🇪🇺", balance: 620.00, iban: "DE89 3704 0044 0532", symbol: "€" }
+      ],
+      transactions: [
+        { id: "TX-8801", date: "2026-11-05 14:10", desc: "Don Don Donki - Shinjuku Tokyo", type: "CARD", amount: "-¥4,200 JPY", status: "SETTLED", rail: "Mastercard PayWave" },
+        { id: "TX-8802", date: "2026-11-04 11:30", desc: "FPX Top-Up via Maybank2u", type: "TOPUP", amount: "+RM 1,500.00 MYR", status: "COMPLETED", rail: "Maybank FPX Rail" },
+        { id: "TX-8803", date: "2026-11-03 09:15", desc: "Auto FX Swap: MYR ➔ JPY", type: "FX", amount: "+¥100,000 JPY", status: "COMPLETED", rail: "J+ Zero-Markup Swap" },
+        { id: "TX-8804", date: "2026-11-01 19:40", desc: "DuitNow QR - Nasi Kandar Pelita", type: "CARD", amount: "-RM 28.50 MYR", status: "SETTLED", rail: "DuitNow QR Instant" }
+      ]
+    };
+
+    let fxTimerInterval = null;
+    let trendChartInstance = null;
+    let categoryChartInstance = null;
+
+    window.onload = function() {
+      lucide.createIcons();
+      renderWallets();
+      renderDashboardTx();
+      calculateFX();
+      renderFxRateMatrix();
+      startFxLockTimer();
+      initCharts();
+      renderMasterLedger();
+
+      document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+        document.getElementById('navMenu').classList.toggle('hidden');
+      });
+    };
+
+    // NAVIGATION TAB SWITCHER
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('metallic-bronze-bg', 'text-white', 'shadow-md');
+        btn.classList.add('text-slate-700');
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) {
+        activeNav.classList.add('metallic-bronze-bg', 'text-white', 'shadow-md');
+        activeNav.classList.remove('text-slate-700');
+      }
+    }
+
+    // RENDER WALLETS
+    function renderWallets() {
+      const container = document.getElementById('walletGrid');
+      container.innerHTML = '';
+
+      state.wallets.forEach(w => {
+        const isPrimary = w.code === 'MYR';
+        const cardHtml = `
+          <div class="glass-card card-hover-effect p-5 rounded-2xl border ${isPrimary ? 'border-bronze-500 bg-cream-100/90' : 'border-bronze-400/20'} flex flex-col justify-between space-y-4 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">${w.flag}</span>
+                <div>
+                  <h4 class="text-xs font-extrabold text-slate-900">${w.code} ${isPrimary ? '<span class="text-[9px] bg-bronze-600 text-white px-1.5 py-0.2 rounded ml-1 font-mono">PRIMARY</span>' : ''}</h4>
+                  <p class="text-[10px] text-slate-500 font-medium">${w.name}</p>
+                </div>
+              </div>
+              <button onclick="copyText('${w.iban}')" class="p-1.5 rounded-lg bg-white hover:bg-cream-200 text-bronze-700 transition border border-bronze-400/20 shadow-sm">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            <div>
+              <p class="text-[9px] text-slate-400 uppercase tracking-wider font-bold">Available Vault Balance</p>
+              <h3 class="text-xl font-extrabold font-mono text-slate-900 mt-0.5">
+                ${w.symbol} ${w.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </h3>
+            </div>
+
+            <div class="pt-2 border-t border-bronze-400/15 flex items-center justify-between text-[11px]">
+              <span class="font-mono text-slate-500 truncate max-w-[170px]">${w.iban}</span>
+              <button onclick="switchTab('fx')" class="text-bronze-700 hover:text-bronze-900 font-bold">Swap FX</button>
+            </div>
+          </div>
+        `;
+        container.innerHTML += cardHtml;
+      });
+      lucide.createIcons();
+      updateTotalBalanceRM();
+    }
+
+    // CALCULATE CONSOLIDATED TOTAL IN RM
+    function updateTotalBalanceRM() {
+      let totalRM = 0;
+      state.wallets.forEach(w => {
+        const rateToMYR = 1 / state.fxRatesFromMYR[w.code];
+        totalRM += w.balance * rateToMYR;
+      });
+      document.getElementById('totalBalanceRM').innerText = `RM ${totalRM.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    // RECENT TRANSACTIONS
+    function renderDashboardTx() {
+      const container = document.getElementById('dashboardTxList');
+      container.innerHTML = '';
+
+      state.transactions.slice(0, 4).forEach(tx => {
+        const isNegative = tx.amount.startsWith('-');
+        const itemHtml = `
+          <div class="p-4 flex items-center justify-between hover:bg-white/60 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl ${isNegative ? 'bg-bronze-500/10 text-bronze-800' : 'bg-emerald-100 text-emerald-700'} flex items-center justify-center">
+                <i data-lucide="${tx.type === 'CARD' ? 'shopping-bag' : (tx.type === 'FX' ? 'repeat' : 'arrow-down-left')}" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-900">${tx.desc}</p>
+                <p class="text-[10px] text-slate-500 font-mono">${tx.date} • ${tx.rail}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-xs font-bold font-mono ${isNegative ? 'text-slate-800' : 'text-emerald-700'}">${tx.amount}</p>
+              <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-cream-200 text-bronze-800 font-bold">${tx.status}</span>
+            </div>
+          </div>
+        `;
+        container.innerHTML += itemHtml;
+      });
+      lucide.createIcons();
+    }
+
+    // FX CONVERTER ENGINE
+    function calculateFX() {
+      const fromCurr = document.getElementById('fxFromCurrency').value;
+      const toCurr = document.getElementById('fxToCurrency').value;
+      const fromAmount = parseFloat(document.getElementById('fxFromAmount').value) || 0;
+
+      // Cross Rate relative to MYR
+      const rateFromMYR = state.fxRatesFromMYR[fromCurr];
+      const rateToMYR = state.fxRatesFromMYR[toCurr];
+      const crossRate = rateToMYR / rateFromMYR;
+
+      const calculatedToAmount = fromAmount * crossRate;
+
+      document.getElementById('fxToAmount').value = calculatedToAmount.toFixed(2);
+      document.getElementById('fxGuaranteedRate').innerText = `1 ${fromCurr} = ${crossRate.toFixed(4)} ${toCurr}`;
+
+      const fromVault = state.wallets.find(w => w.code === fromCurr);
+      if (fromVault) {
+        document.getElementById('fxFromAvailable').innerText = `${fromVault.symbol} ${fromVault.balance.toLocaleString()} ${fromCurr}`;
+      }
+    }
+
+    function swapFXCurrencies() {
+      const fromSelect = document.getElementById('fxFromCurrency');
+      const toSelect = document.getElementById('fxToCurrency');
+      const temp = fromSelect.value;
+      fromSelect.value = toSelect.value;
+      toSelect.value = temp;
+      calculateFX();
+    }
+
+    function executeFXConversion() {
+      const fromCurr = document.getElementById('fxFromCurrency').value;
+      const toCurr = document.getElementById('fxToCurrency').value;
+      const fromAmt = parseFloat(document.getElementById('fxFromAmount').value) || 0;
+      const toAmt = parseFloat(document.getElementById('fxToAmount').value) || 0;
+
+      const fromVault = state.wallets.find(w => w.code === fromCurr);
+      const toVault = state.wallets.find(w => w.code === toCurr);
+
+      if (!fromVault || fromVault.balance < fromAmt) {
+        alert(`Insufficient funds in your ${fromCurr} vault!`);
+        return;
+      }
+
+      fromVault.balance -= fromAmt;
+      if (toVault) {
+        toVault.balance += toAmt;
+      } else {
+        createCurrencyBucket(toCurr, toCurr, '🌐', state.fxRatesFromMYR[toCurr]);
+        state.wallets.find(w => w.code === toCurr).balance += toAmt;
+      }
+
+      state.transactions.unshift({
+        id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+        date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        desc: `FX Swap: ${fromCurr} ➔ ${toCurr}`,
+        type: "FX",
+        amount: `+${toAmt.toFixed(2)} ${toCurr}`,
+        status: "COMPLETED",
+        rail: "J+ Instant Ledger Rail"
+      });
+
+      renderWallets();
+      renderDashboardTx();
+      renderMasterLedger();
+      alert(`Success! Swapped ${fromAmt} ${fromCurr} into ${toAmt.toFixed(2)} ${toCurr} at 0% markup!`);
+    }
+
+    // 60 SECOND RATE LOCK TIMER
+    function startFxLockTimer() {
+      let seconds = 59;
+      fxTimerInterval = setInterval(() => {
+        seconds--;
+        if (seconds < 0) {
+          seconds = 59;
+          state.fxRatesFromMYR.SGD += (Math.random() - 0.5) * 0.001;
+          calculateFX();
+          renderFxRateMatrix();
+        }
+        document.getElementById('fxLockTimer').innerText = `00:${seconds < 10 ? '0' + seconds : seconds}`;
+      }, 1000);
+    }
+
+    function renderFxRateMatrix() {
+      const matrix = document.getElementById('fxRateMatrix');
+      matrix.innerHTML = `
+        <div class="flex justify-between p-2 rounded-xl bg-white border border-bronze-400/20 shadow-sm"><span>MYR ➔ SGD (Singapore)</span><span class="font-bold text-slate-900">${state.fxRatesFromMYR.SGD.toFixed(4)}</span></div>
+        <div class="flex justify-between p-2 rounded-xl bg-white border border-bronze-400/20 shadow-sm"><span>MYR ➔ JPY (Japan)</span><span class="font-bold text-slate-900">${state.fxRatesFromMYR.JPY.toFixed(2)}</span></div>
+        <div class="flex justify-between p-2 rounded-xl bg-white border border-bronze-400/20 shadow-sm"><span>MYR ➔ THB (Thailand)</span><span class="font-bold text-slate-900">${state.fxRatesFromMYR.THB.toFixed(2)}</span></div>
+        <div class="flex justify-between p-2 rounded-xl bg-white border border-bronze-400/20 shadow-sm"><span>MYR ➔ USD (United States)</span><span class="font-bold text-slate-900">${state.fxRatesFromMYR.USD.toFixed(4)}</span></div>
+      `;
+    }
+
+    // REMITTANCE LOGIC
+    function setTransferType(type) {
+      const btnDuitNow = document.getElementById('btn-transfer-duitnow');
+      const btnBank = document.getElementById('btn-transfer-bank');
+      if (type === 'duitnow') {
+        btnDuitNow.className = 'py-2.5 text-xs font-bold rounded-xl transition metallic-bronze-bg text-white shadow-sm';
+        btnBank.className = 'py-2.5 text-xs font-bold rounded-xl text-slate-600 transition hover:text-slate-900';
+        document.getElementById('remitTargetCurrency').value = 'MYR';
+      } else {
+        btnBank.className = 'py-2.5 text-xs font-bold rounded-xl transition metallic-bronze-bg text-white shadow-sm';
+        btnDuitNow.className = 'py-2.5 text-xs font-bold rounded-xl text-slate-600 transition hover:text-slate-900';
+        document.getElementById('remitTargetCurrency').value = 'SGD';
+      }
+      updateRemitEstimate();
+    }
+
+    function updateRemitEstimate() {
+      const targetCurr = document.getElementById('remitTargetCurrency').value;
+      const sendAmt = parseFloat(document.getElementById('remitSendAmount').value) || 0;
+      
+      const railMap = {
+        MYR: { rail: "DuitNow National Rail", speed: "Instant (< 5s)", fee: 0.00, rate: 1.0 },
+        SGD: { rail: "FAST Singapore Bank Rail", speed: "< 1 minute", fee: 2.00, rate: 0.3015 },
+        THB: { rail: "PromptPay Thailand Rail", speed: "Instant", fee: 3.50, rate: 7.65 },
+        EUR: { rail: "SEPA Instant Europe", speed: "< 15 minutes", fee: 5.00, rate: 0.2070 }
+      };
+
+      const selected = railMap[targetCurr];
+      document.getElementById('remitRailName').innerHTML = `<i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i> ${selected.rail}`;
+      document.getElementById('remitArrivalEstimate').innerText = selected.speed;
+      document.getElementById('remitFee').innerText = `RM ${selected.fee.toFixed(2)} MYR`;
+      
+      const converted = (sendAmt - selected.fee) * selected.rate;
+      document.getElementById('remitCalculatedTotal').innerText = `${converted.toFixed(2)} ${targetCurr}`;
+      lucide.createIcons();
+    }
+
+    function executeRemittance() {
+      const name = document.getElementById('remitRecipientName').value;
+      const sendAmt = parseFloat(document.getElementById('remitSendAmount').value) || 0;
+      const targetCurr = document.getElementById('remitTargetCurrency').value;
+
+      if (!name) {
+        alert("Please enter recipient legal name or DuitNow ID!");
+        return;
+      }
+
+      const myrVault = state.wallets.find(w => w.code === 'MYR');
+      if (myrVault.balance < sendAmt) {
+        alert("Insufficient balance in Ringgit Malaysia (MYR) vault!");
+        return;
+      }
+
+      myrVault.balance -= sendAmt;
+      state.transactions.unshift({
+        id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+        date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        desc: `Transfer to ${name}`,
+        type: "REMIT",
+        amount: `-RM ${sendAmt.toFixed(2)} MYR`,
+        status: "SETTLED",
+        rail: document.getElementById('remitRailName').innerText
+      });
+
+      renderWallets();
+      renderDashboardTx();
+      renderMasterLedger();
+      alert(`Transfer of RM ${sendAmt.toFixed(2)} to ${name} (${targetCurr}) processed successfully!`);
+    }
+
+    // MASTER LEDGER
+    function renderMasterLedger() {
+      const container = document.getElementById('masterLedgerBody');
+      const filter = document.getElementById('ledgerFilterType').value;
+      container.innerHTML = '';
+
+      const filtered = state.transactions.filter(t => filter === 'ALL' || t.type === filter);
+
+      filtered.forEach(tx => {
+        const rowHtml = `
+          <tr class="hover:bg-cream-100/60 transition">
+            <td class="p-3 text-slate-500">${tx.date}</td>
+            <td class="p-3 font-bold text-slate-900">${tx.desc}</td>
+            <td class="p-3 text-slate-500">${tx.rail}</td>
+            <td class="p-3 font-bold ${tx.amount.startsWith('-') ? 'text-slate-800' : 'text-emerald-700'}">${tx.amount}</td>
+            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-cream-200 text-bronze-800 font-bold text-[10px]">${tx.status}</span></td>
+          </tr>
+        `;
+        container.innerHTML += rowHtml;
+      });
+    }
+
+    // CHARTS
+    function initCharts() {
+      const ctxTrend = document.getElementById('fxTrendChart').getContext('2d');
+      trendChartInstance = new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'MYR/SGD',
+            data: [0.3001, 0.3005, 0.3010, 0.3008, 0.3012, 0.3015, 0.3015],
+            borderColor: '#B87333',
+            backgroundColor: 'rgba(184, 115, 51, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#8C533E', font: { size: 9 } } },
+            y: { grid: { color: 'rgba(198,139,89,0.1)' }, ticks: { color: '#8C533E', font: { size: 9 } } }
+          }
+        }
+      });
+
+      const ctxCat = document.getElementById('categoryChart').getContext('2d');
+      categoryChartInstance = new Chart(ctxCat, {
+        type: 'doughnut',
+        data: {
+          labels: ['Dining & Street Food', 'Hotels & Airbnb', 'Airlines & Transit', 'Duty Free Shopping'],
+          datasets: [{
+            data: [35, 30, 20, 15],
+            backgroundColor: ['#FF6F91', '#46C5EA', '#AB7EE0', '#88D644'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#643828', font: { size: 10, weight: 'bold' } } }
+          }
+        }
+      });
+    }
+
+    // UTILITIES
+    function selectBank(el) {
+      document.querySelectorAll('.bank-option').forEach(b => b.classList.remove('border-bronze-600', 'bg-cream-100'));
+      el.classList.add('border-bronze-600', 'bg-cream-100');
+    }
+
+    function executeTopUp() {
+      const amt = parseFloat(document.getElementById('topUpAmountInput').value) || 0;
+      const myrVault = state.wallets.find(w => w.code === 'MYR');
+
+      myrVault.balance += amt;
+      state.transactions.unshift({
+        id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+        date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        desc: "FPX Online Reload (Maybank2u)",
+        type: "TOPUP",
+        amount: `+RM ${amt.toFixed(2)} MYR`,
+        status: "COMPLETED",
+        rail: "FPX Bank Gateway"
+      });
+
+      renderWallets();
+      renderDashboardTx();
+      renderMasterLedger();
+      closeModal('topUpModal');
+      alert(`Reload successful! +RM ${amt.toFixed(2)} credited to your Ringgit vault.`);
+    }
+
+    function createCurrencyBucket(code, name, flag, defaultRate) {
+      if (state.wallets.find(w => w.code === code)) {
+        alert("Bucket already active!");
+        return;
+      }
+      state.wallets.push({
+        code: code,
+        name: name,
+        flag: flag,
+        balance: 0.00,
+        iban: `${code} Account Active`,
+        symbol: code
+      });
+      state.fxRatesFromMYR[code] = defaultRate;
+      renderWallets();
+      closeModal('addCurrencyModal');
+      alert(`Issued new ${name} (${code}) bucket!`);
+    }
+
+    function toggleCardFreeze(el) {
+      if (el.checked) {
+        alert("J+ Metal Card FROZEN. Payments suspended.");
+      } else {
+        alert("Card UNFROZEN. Ready for global PayWave transactions.");
+      }
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+      document.getElementById(id).classList.add('flex');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+      document.getElementById(id).classList.remove('flex');
+    }
+
+    function downloadStatementCSV() {
+      let csv = "ID,Date,Description,Type,Amount,Rail,Status\n";
+      state.transactions.forEach(t => {
+        csv += `${t.id},${t.date},"${t.desc}",${t.type},"${t.amount}",${t.rail},${t.status}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'JOURNEY_Plus_Malaysia_Statement.csv');
+      a.click();
+    }
+
+    function copyText(text) {
+      const el = document.createElement('textarea');
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      alert(`Copied ID to clipboard: ${text}`);
+    }
+  </script>
+</body>
+</html>
