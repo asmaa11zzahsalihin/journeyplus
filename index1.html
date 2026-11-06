@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOURNEY+ Mobile E-Wallet</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #26211E;
+            color: #4A3B32;
+        }
+
+        .brand-copper-btn {
+            background: linear-gradient(135deg, #C68B59 0%, #8C533E 100%);
+            color: #FFFFFF;
+        }
+
+        .compass-ring {
+            background: radial-gradient(circle, #D4A373 0%, #8C533E 100%);
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4">
+
+    <!-- Mobile Device Frame Container -->
+    <div class="w-full max-w-sm bg-white min-h-[680px] rounded-[36px] shadow-2xl border-4 border-stone-800 overflow-hidden flex flex-col justify-between">
+
+        <!-- APP HEADER BAR -->
+        <div class="bg-[#FAF4F0] px-5 py-4 border-b border-stone-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-full compass-ring flex items-center justify-center shadow-sm">
+                    <span class="font-black text-xs text-white">J+</span>
+                </div>
+                <div class="font-black text-lg tracking-tight">
+                    <span class="text-[#8CE600]">J</span><span class="text-[#00D2FF]">O</span><span class="text-[#B59CFF]">U</span><span class="text-[#FF8A9A]">R</span><span class="text-[#8C533E]">N</span><span class="text-[#C68B59]">E</span><span class="text-[#FF8A9A]">Y</span><span class="text-[#FF5E7E]">+</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span class="text-[11px] font-bold text-stone-600">MYR Base</span>
+            </div>
+        </div>
+
+        <!-- MAIN APP VIEW AREA -->
+        <div class="p-5 overflow-y-auto flex-grow bg-[#FAF4F0]">
+
+            <!-- VIEW 1: HOME DASHBOARD -->
+            <div id="view-dashboard" class="tab-content active space-y-5">
+                
+                <!-- Main Wallet Balance Card (Wadiah) -->
+                <div class="brand-copper-btn p-5 rounded-3xl shadow-md text-white space-y-3">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-amber-100">Primary Wallet (Wadiah)</p>
+                            <h2 class="text-3xl font-extrabold mt-0.5">RM 12,450.80</h2>
+                        </div>
+                        <span class="bg-white/20 px-2.5 py-1 rounded-full text-[10px] font-bold">DuitNow</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/20 text-center text-xs font-bold">
+                        <button onclick="alert('Top Up via FPX Online Banking Triggered')" class="bg-white/20 hover:bg-white/30 py-2 rounded-xl">+ Top Up</button>
+                        <button onclick="switchTab('split')" class="bg-white/20 hover:bg-white/30 py-2 rounded-xl">Split Bill</button>
+                        <button onclick="switchTab('solat')" class="bg-white/20 hover:bg-white/30 py-2 rounded-xl">Solat</button>
+                    </div>
+                </div>
+
+                <!-- Active Travel Pockets -->
+                <div class="space-y-2">
+                    <h3 class="font-bold text-xs text-stone-500 uppercase tracking-wider">Multi-Currency Travel Pockets</h3>
+                    <div class="bg-white p-3.5 rounded-2xl border border-stone-200 flex justify-between items-center shadow-sm">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">🇹🇭</span>
+                            <div>
+                                <p class="font-bold text-sm text-[#4A3B32]">Hatyai Trip Vault</p>
+                                <p class="text-[10px] text-stone-400">Bay' al-Sarf Spot Rate</p>
+                            </div>
+                        </div>
+                        <span class="font-black text-sm text-[#8C533E]">฿ 14,500 THB</span>
+                    </div>
+
+                    <div class="bg-white p-3.5 rounded-2xl border border-stone-200 flex justify-between items-center shadow-sm">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">🇯🇵</span>
+                            <div>
+                                <p class="font-bold text-sm text-[#4A3B32]">Tokyo Travel Vault</p>
+                                <p class="text-[10px] text-stone-400">0% Foreign Fee</p>
+                            </div>
+                        </div>
+                        <span class="font-black text-sm text-stone-700">¥ 45,000 JPY</span>
+                    </div>
+                </div>
+
+                <!-- Quick Spot FX Converter -->
+                <div class="bg-white p-4 rounded-2xl border border-stone-200 space-y-3">
+                    <h4 class="font-bold text-xs text-[#4A3B32]">Quick Currency Converter</h4>
+                    <div class="flex gap-2">
+                        <input type="number" id="quick-myr" value="100" oninput="convertFX()" class="w-1/2 bg-stone-50 border border-stone-300 rounded-xl p-2.5 text-xs font-bold text-stone-800">
+                        <select id="quick-target" onchange="convertFX()" class="w-1/2 bg-stone-50 border border-stone-300 rounded-xl p-2.5 text-xs font-bold text-stone-800">
+                            <option value="THB">THB (฿)</option>
+                            <option value="USD">USD ($)</option>
+                            <option value="JPY">JPY (¥)</option>
+                            <option value="SGD">SGD ($)</option>
+                        </select>
+                    </div>
+                    <div class="bg-[#FAF4F0] p-3 rounded-xl border border-[#EFE4DC] flex justify-between items-center text-xs">
+                        <span class="font-bold text-stone-500">Converted Amount:</span>
+                        <span id="quick-result" class="font-black text-[#8C533E]">฿ 785 THB</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- VIEW 2: SPLIT BILL ENGINE -->
+            <div id="view-split" class="tab-content space-y-4">
+                <div class="border-b border-stone-200 pb-2">
+                    <h3 class="font-extrabold text-base text-[#4A3B32]">Group Split Bill</h3>
+                    <p class="text-[11px] text-stone-400">Qard al-Hassan Interest-Free Debt Engine</p>
+                </div>
+
+                <!-- Group Trip Folder -->
+                <div class="bg-white p-3.5 rounded-2xl border-2 border-[#C68B59] flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-xl">🇹🇭</span>
+                        <div>
+                            <p class="font-bold text-xs text-[#4A3B32]">Active: Hatyai Foodie Trip</p>
+                            <p class="text-[10px] text-stone-400">4 Members (Aiman, Najwa, Nadine, Anis)</p>
+                        </div>
+                    </div>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                </div>
+
+                <!-- Form -->
+                <div class="bg-white p-4 rounded-2xl border border-stone-200 space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-stone-500 mb-1">Total Bill Amount Paid</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="split-amt" value="2400" oninput="calcMobileSplit()" class="w-2/3 bg-stone-50 border border-stone-300 rounded-xl p-2.5 text-xs font-bold text-stone-800">
+                            <select id="split-curr" onchange="calcMobileSplit()" class="w-1/3 bg-stone-50 border border-stone-300 rounded-xl p-2.5 text-xs font-bold text-stone-800">
+                                <option value="THB">THB (฿)</option>
+                                <option value="MYR">MYR (RM)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-stone-500 mb-1">Split Among (Persons)</label>
+                        <input type="number" id="split-num" value="4" oninput="calcMobileSplit()" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 text-xs font-bold text-stone-800">
+                    </div>
+
+                    <div class="bg-[#FAF4F0] p-3 rounded-xl border border-[#EFE4DC] space-y-1">
+                        <p class="text-[10px] text-stone-500 font-bold">Each Person Owes (MYR Equivalent):</p>
+                        <p id="split-result" class="text-xl font-black text-[#8C533E]">RM 47.10</p>
+                    </div>
+
+                    <button onclick="alert('WhatsApp debt payment request sent to trip group!')" class="w-full brand-copper-btn py-3 rounded-xl font-bold text-xs shadow-sm">
+                        Send WhatsApp Payment Request
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 3: HATYAI ITINERARY -->
+            <div id="view-itinerary" class="tab-content space-y-3">
+                <div class="border-b border-stone-200 pb-2">
+                    <h3 class="font-extrabold text-base text-[#4A3B32]">1-Day Hatyai Halal Plan</h3>
+                    <p class="text-[11px] text-stone-400">Smart Route & Ticket Price Tracking</p>
+                </div>
+
+                <div class="space-y-2.5 text-xs">
+                    <div class="bg-white p-3 rounded-2xl border border-stone-200 space-y-1 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-[#8C533E]">08:30 AM</span>
+                            <span class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded-full">✓ Halal</span>
+                        </div>
+                        <p class="font-extrabold text-stone-800">Chabura Dimsum Breakfast</p>
+                        <p class="text-[10px] text-stone-400">Est: ฿180 THB (~RM 23.50)</p>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-2xl border border-stone-200 space-y-1 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-[#8C533E]">11:30 AM</span>
+                            <span class="bg-indigo-100 text-indigo-800 text-[9px] font-bold px-2 py-0.5 rounded-full">Solat Stop</span>
+                        </div>
+                        <p class="font-extrabold text-stone-800">Songkhla Central Mosque</p>
+                        <p class="text-[10px] text-stone-400">Dhuhr & Asr (Jam' Mode Active)</p>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-2xl border border-stone-200 space-y-1 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-[#8C533E]">03:30 PM</span>
+                            <span class="bg-cyan-100 text-cyan-800 text-[9px] font-bold px-2 py-0.5 rounded-full">Attraction</span>
+                        </div>
+                        <p class="font-extrabold text-stone-800">Khlong Hae Floating Market</p>
+                        <p class="text-[10px] text-stone-400">Est: ฿250 THB (~RM 32.80)</p>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-2xl border border-stone-200 space-y-1 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-[#8C533E]">07:00 PM</span>
+                            <span class="bg-rose-100 text-rose-800 text-[9px] font-bold px-2 py-0.5 rounded-full">Shopping</span>
+                        </div>
+                        <p class="font-extrabold text-stone-800">Lee Garden Night Market</p>
+                        <p class="text-[10px] text-stone-400">Street Food & Souvenirs</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 4: SPENDING TRACKER -->
+            <div id="view-tracker" class="tab-content space-y-4">
+                <div class="border-b border-stone-200 pb-2">
+                    <h3 class="font-extrabold text-base text-[#4A3B32]">Trip Expense Breakdown</h3>
+                    <p class="text-[11px] text-stone-400">Budget Analytics for Hatyai Vacation</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-stone-200 space-y-3 shadow-sm">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-stone-500">Trip Budget:</span>
+                        <span class="text-sm font-black text-[#8C533E]">RM 2,500.00</span>
+                    </div>
+
+                    <!-- Visual Progress Bar Stack -->
+                    <div class="space-y-2 text-xs">
+                        <div>
+                            <div class="flex justify-between mb-1 font-bold">
+                                <span>🍜 Food & Dining</span>
+                                <span>RM 850 (34%)</span>
+                            </div>
+                            <div class="w-full bg-stone-100 rounded-full h-2">
+                                <div class="bg-[#C68B59] h-2 rounded-full" style="width: 34%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1 font-bold">
+                                <span>🏨 Hotel & Stay</span>
+                                <span>RM 700 (28%)</span>
+                            </div>
+                            <div class="w-full bg-stone-100 rounded-full h-2">
+                                <div class="bg-[#8C533E] h-2 rounded-full" style="width: 28%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1 font-bold">
+                                <span>🚌 Transport & Rides</span>
+                                <span>RM 450 (18%)</span>
+                            </div>
+                            <div class="w-full bg-stone-100 rounded-full h-2">
+                                <div class="bg-cyan-500 h-2 rounded-full" style="width: 18%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1 font-bold">
+                                <span>🛍️ Souvenirs & Gifts</span>
+                                <span>RM 500 (20%)</span>
+                            </div>
+                            <div class="w-full bg-stone-100 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full" style="width: 20%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 5: JOURNEY SOLAT -->
+            <div id="view-solat" class="tab-content space-y-4">
+                <div class="bg-emerald-800 text-white p-5 rounded-2xl text-center space-y-2 shadow-sm">
+                    <div class="w-10 h-10 rounded-full bg-emerald-700 mx-auto flex items-center justify-center font-bold text-amber-300">
+                        🧭
+                    </div>
+                    <h3 class="font-extrabold text-sm">AR Qiblah: 292.4° NW</h3>
+                    <p class="text-[10px] text-emerald-200">GPS: Hatyai, Songkhla, Thailand</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-stone-200 space-y-2 text-xs font-bold text-stone-700">
+                    <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Subuh</span><span>05:14 AM</span></div>
+                    <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Zohor (Jam' Taqdim)</span><span>12:22 PM</span></div>
+                    <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Asar</span><span>03:40 PM</span></div>
+                    <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Maghrib</span><span>06:28 PM</span></div>
+                    <div class="flex justify-between p-2 bg-stone-50 rounded-lg"><span>Isyak</span><span>07:40 PM</span></div>
+                </div>
+
+                <button onclick="alert('Traveler Jam & Qasr Mode Enabled!')" class="w-full brand-copper-btn py-3 rounded-xl font-bold text-xs">
+                    Enable Jam' & Qasr Traveler Mode
+                </button>
+            </div>
+
+        </div>
+
+        <!-- BOTTOM MOBILE NAVIGATION TABS -->
+        <div class="bg-white border-t border-stone-200 px-2 py-3 grid grid-cols-5 text-center text-[10px] font-bold text-stone-500">
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="text-[#8C533E] space-y-0.5">
+                <div class="text-sm">🏠</div>
+                <div>Home</div>
+            </button>
+            <button onclick="switchTab('split')" id="tab-split" class="hover:text-[#8C533E] space-y-0.5">
+                <div class="text-sm">✂️</div>
+                <div>Split</div>
+            </button>
+            <button onclick="switchTab('itinerary')" id="tab-itinerary" class="hover:text-[#8C533E] space-y-0.5">
+                <div class="text-sm">📍</div>
+                <div>Hatyai</div>
+            </button>
+            <button onclick="switchTab('tracker')" id="tab-tracker" class="hover:text-[#8C533E] space-y-0.5">
+                <div class="text-sm">📊</div>
+                <div>Budget</div>
+            </button>
+            <button onclick="switchTab('solat')" id="tab-solat" class="hover:text-[#8C533E] space-y-0.5">
+                <div class="text-sm">🧭</div>
+                <div>Solat</div>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT ENGINE -->
+    <script>
+        // Tab Navigation Switcher
+        function switchTab(tabKey) {
+            document.querySelectorAll('.tab-content').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.querySelectorAll('button[id^="tab-"]').forEach(btn => {
+                btn.classList.remove('text-[#8C533E]');
+                btn.classList.add('text-stone-500');
+            });
+
+            const targetView = document.getElementById(`view-${tabKey}`);
+            const targetTabBtn = document.getElementById(`tab-${tabKey}`);
+            
+            if (targetView) targetView.classList.add('active');
+            if (targetTabBtn) {
+                targetTabBtn.classList.remove('text-stone-500');
+                targetTabBtn.classList.add('text-[#8C533E]');
+            }
+        }
+
+        // Quick FX Logic
+        function convertFX() {
+            const myr = parseFloat(document.getElementById('quick-myr').value) || 0;
+            const target = document.getElementById('quick-target').value;
+            
+            const rates = { THB: 7.85, USD: 0.22, JPY: 33.4, SGD: 0.30 };
+            const converted = myr * (rates[target] || 1);
+            
+            document.getElementById('quick-result').innerText = `${target === 'JPY' ? converted.toFixed(0) : converted.toFixed(2)} ${target}`;
+        }
+
+        // Split Bill Logic
+        function calcMobileSplit() {
+            const total = parseFloat(document.getElementById('split-amt').value) || 0;
+            const currency = document.getElementById('split-curr').value;
+            const people = parseInt(document.getElementById('split-num').value) || 1;
+            
+            const perPerson = total / people;
+            
+            if (currency === 'THB') {
+                const inMYR = perPerson / 7.85;
+                document.getElementById('split-result').innerText = `RM ${inMYR.toFixed(2)} (฿${perPerson.toFixed(0)} THB)`;
+            } else {
+                document.getElementById('split-result').innerText = `RM ${perPerson.toFixed(2)}`;
+            }
+        }
+    </script>
+</body>
+</html>
